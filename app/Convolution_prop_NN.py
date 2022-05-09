@@ -18,17 +18,10 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.datasets import mnist
+from calculations import h, gaussian, lens
+
 
 # Constants and definitions
-
-def h(r,z,l):
-    return np.exp(1j*2*np.pi/(l*z))/(1j*l*z)*np.exp(1j*2*np.pi/(l*2*z)*r*r)
-
-def gaussian(r,s):
-    return np.exp(-r**2/(2*s**2))
-
-def lens(r,f,l):
-    return np.exp(1j*(-2*np.pi)/l*np.sqrt(r**2+f**2))
 
 def custom_weights(shape, dtype=None):
     kernel = np.array([[h(np.sqrt(x**2+y**2),z,Lambda) for x in np.arange(-size/2,size/2)*pixel] for y in np.arange(-size/2,size/2)*pixel])
@@ -60,19 +53,18 @@ pixel = 0.1
 # current_time = time.strftime("%H:%M:%S", t)
 # print(current_time)
 
-hkernel = np.array([[h(np.sqrt(x**2+y**2),z,Lambda) for x in np.arange(-size/2,size/2)*pixel] for y in np.arange(-size/2,size/2)*pixel])
 lens = np.array([[lens(np.sqrt(x**2+y**2),f,Lambda) for x in np.arange(-size/2,size/2)*pixel] for y in np.arange(-size/2,size/2)*pixel])
 initAmp = np.array([[gaussian(np.sqrt(x**2+y**2),Sigma) for x in np.arange(-size/2,size/2)*pixel] for y in np.arange(-size/2,size/2)*pixel])
-
-
 field = np.array([np.real(initAmp*lens),np.imag(initAmp*lens)])
+field = field.reshape((1,2,size, size),order='F')
+
+
 # field = np.array([[[np.real(initAmp*lens)[i,j],np.imag(initAmp*lens)[i,j]] for i in range(size)] for j in range(size)])
 print(field.shape)
-
+hkernel = np.array([[h(np.sqrt(x**2+y**2),z,Lambda) for x in np.arange(-size/2,size/2)*pixel] for y in np.arange(-size/2,size/2)*pixel])
 # plt.imshow(field[0,:,:], interpolation='nearest')
 # plt.show()
 
-field = field.reshape((1,2,size, size),order='F')
 
 # plt.imshow(field[0,0,:,:], interpolation='nearest')
 # plt.show()
@@ -85,7 +77,7 @@ inputs = keras.Input(shape=(2,size,size))
 #x=keras.layers.Reshape((2,size,size))(inputs)
 x=inputs
 
-Re=keras.layers.Cropping2D(cropping=((-1,0),0))(x)
+Re=keras.layers.Cropping2D(cropping=((1,0),0))(x)
 Re=keras.layers.Reshape((size,size,1))(Re)
 Im=keras.layers.Cropping2D(cropping=((0,1),0))(x)
 Im=keras.layers.Reshape((size,size,1))(Im)

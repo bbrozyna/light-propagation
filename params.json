@@ -1,0 +1,9 @@
+{
+  "size_of_what": 256,
+  "frequency": 140,
+  "wavelength_um": null,
+  "variance": 20,
+  "focal_length": 500,
+  "object_distance": 500,
+  "pixel_size": 1
+}
