@@ -6,19 +6,49 @@ class TestPropagationParams:
 
     @pytest.fixture
     def params(self):
-        return PropagationParams()
+        return PropagationParams.get_example_propagation_data()
 
-    def test_matrix_size(self, params):
+    def test_int_params(self, params):
+        int_params = ["focal_length", "distance"]
         proper_value = 5
-        xfail_value_negative = -1
-        xfail_value_le_zero = 0
+        proper_negative_value = -1
+        proper_float_value = 0.1
         xfail_value_not_convertable = " - 1 2 test 3"
 
-        params.matrix_size = proper_value
-        assert params.matrix_size == proper_value, "Couldn't assign proper value to matrix size"
-        with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
-            params.matrix_size = xfail_value_negative
-        with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
-            params.matrix_size = xfail_value_le_zero
-        with pytest.raises(ParamsValidationException, match=f"cannot be converted to {int}"):
-            params.matrix_size = xfail_value_not_convertable
+        for int_param in int_params:
+            setattr(params, int_param, proper_value)
+            assert getattr(params, int_param) == proper_value
+            setattr(params, int_param, proper_negative_value)
+            assert getattr(params, int_param) == proper_negative_value
+            setattr(params, int_param, proper_float_value)
+            assert getattr(params, int_param) == int(proper_float_value)
+            with pytest.raises(ParamsValidationException, match=f"cannot be converted to {int}"):
+                setattr(params, int_param, xfail_value_not_convertable)
+
+    def test_positive_int_params(self, params):
+        positive_int_params = ["matrix_size", "nu", "sigma"]
+        proper_value = 5
+        xfail_zero = 0
+        xfail_negative_value = -1
+
+        for int_param in positive_int_params:
+            setattr(params, int_param, proper_value)
+            assert getattr(params, int_param) == proper_value
+            with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
+                setattr(params, int_param, xfail_negative_value)
+            with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
+                setattr(params, int_param, xfail_zero)
+
+    def test_positive_float_params(self, params):
+        positive_float_params = ["wavelength", "pixel"]
+        proper_value = 5
+        proper_value2 = "5.3"
+        xfail_negative_value = -1
+
+        for int_param in positive_float_params:
+            setattr(params, int_param, proper_value)
+            assert getattr(params, int_param) == proper_value
+            setattr(params, int_param, proper_value2)
+            assert getattr(params, int_param) == float(proper_value2)
+            with pytest.raises(ParamsValidationException, match=f"{float} greater than 0"):
+                setattr(params, int_param, xfail_negative_value)

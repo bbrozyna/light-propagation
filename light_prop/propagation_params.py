@@ -23,8 +23,7 @@ class PropagationParams:
 
     @matrix_size.setter
     def matrix_size(self, size):
-        self.positive_integer_validator(size)
-        self._matrix_size = size
+        self._matrix_size = self.positive_integer_validator(size)
 
     @property
     def nu(self):
@@ -32,8 +31,7 @@ class PropagationParams:
 
     @nu.setter
     def nu(self, value):
-        self.positive_integer_validator(value)
-        self._nu = value
+        self._nu = self.positive_integer_validator(value)
 
     @property
     def wavelength(self):
@@ -41,8 +39,7 @@ class PropagationParams:
 
     @wavelength.setter
     def wavelength(self, value):
-        self.positive_float_validator(value)
-        self._wavelength = value
+        self._wavelength = self.positive_float_validator(value)
 
     @property
     def sigma(self):
@@ -50,8 +47,7 @@ class PropagationParams:
 
     @sigma.setter
     def sigma(self, value):
-        self.positive_integer_validator(value)
-        self._sigma = value
+        self._sigma = self.positive_integer_validator(value)
 
     @property
     def focal_length(self):
@@ -59,8 +55,7 @@ class PropagationParams:
 
     @focal_length.setter
     def focal_length(self, value):
-        self.cast_to_type_validator(value, expected_type=int)
-        self._focal_length = value
+        self._focal_length = self.cast_to_type_validator(value, expected_type=int)
 
     @property
     def distance(self):
@@ -68,8 +63,7 @@ class PropagationParams:
 
     @distance.setter
     def distance(self, value):
-        self.cast_to_type_validator(value, expected_type=int)
-        self._distance = value
+        self._distance = self.cast_to_type_validator(value, expected_type=int)
 
     @property
     def pixel(self):
@@ -77,23 +71,23 @@ class PropagationParams:
 
     @pixel.setter
     def pixel(self, value):
-        self.positive_float_validator(value)
-        self._pixel = value
+        self._pixel = self.positive_float_validator(value)
 
     def positive_float_validator(self, value):
-        self.positive_value_validator(value, expected_type=float)
+        return self.positive_value_validator(value, expected_type=float)
 
     def positive_integer_validator(self, value):
-        self.positive_value_validator(value, expected_type=int)
+        return self.positive_value_validator(value, expected_type=int)
 
     def positive_value_validator(self, value, expected_type):
-        self.cast_to_type_validator(value, expected_type)
+        value = self.cast_to_type_validator(value, expected_type)
         if expected_type(value) <= 0:
             raise ParamsValidationException(f"Matrix size should be {expected_type} greater than 0")
+        return value
 
     def cast_to_type_validator(self, value, expected_type):
         try:
-            expected_type(value)
+            return expected_type(value)
         except ValueError:
             raise ParamsValidationException(f"Matrix size: {value} cannot be converted to {expected_type}")
 

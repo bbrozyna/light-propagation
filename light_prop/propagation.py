@@ -1,6 +1,7 @@
 """
 Light propagation with convolution method
 
+Models:
 Paweł Komorowski
 pawel.komorowski@wat.edu.pl
 """
