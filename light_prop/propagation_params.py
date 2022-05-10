@@ -4,6 +4,10 @@ import logging
 from typing import List
 
 
+class ParamsValidationException(Exception):
+    pass
+
+
 class PropagationParams:
     def __init__(self):
         c = 299792458
@@ -15,6 +19,39 @@ class PropagationParams:
         self.z = self.focal_length
         self.pixel = 1
 
+    def __str__(self):
+        return self.__dict__
+
+    @property
+    def matrix_size(self):
+        return self._matrix_size
+
+    @matrix_size.setter
+    def matrix_size(self, size):
+        self.positive_integer_validator(size)
+        self._matrix_size = size
+
+    @property
+    def nu(self):
+        return self._nu
+
+    @nu.setter
+    def nu(self, value):
+        self.positive_integer_validator(value)
+        self._nu = value
+
+    def positive_float_validator(self, value):
+        self.positive_value_validator(value, expected_type=float)
+
+    def positive_integer_validator(self, value):
+        self.positive_value_validator(value, expected_type=int)
+
+    def positive_value_validator(self, value, expected_type):
+        try:
+            if expected_type(value) <= 0:
+                raise ParamsValidationException(f"Matrix size should be {expected_type} greater than 0")
+        except ValueError:
+            raise ParamsValidationException(f"Matrix size: {value} cannot be converted to {expected_type}")
 
 class KimaiEntry:
 
