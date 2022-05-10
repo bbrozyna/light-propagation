@@ -7,23 +7,17 @@ pawel.komorowski@wat.edu.pl
 import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
-from calculations import h, gaussian, lens
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Convolution2D
 
+from calculations import h, gaussian, lens
 from propagation_params import PropagationParams
 
 
 class BasePropagation:
     def __int__(self, propagation_params: PropagationParams):
         self.params = propagation_params
-        # self.size = propagation_params.matrix_size
-        # self.wavelength = propagation_params.wavelength
-        # self.pixel = propagation_params.pixel
-        # self.sigma = propagation_params.sigma
-        # self.focal_length = propagation_params.focal_length
-        # self.z = propagation_params.distance
 
     def propagate(self):
         field_distribution = self.get_field_distribution()
@@ -37,7 +31,7 @@ class BasePropagation:
         raise NotImplemented("Please implement field modifier")
 
     def calculate_propagation(self, field_distribution, field_modifier):
-        pass
+        return None
 
 
 class ConvolutionPropagation(BasePropagation):
@@ -47,7 +41,7 @@ class ConvolutionPropagation(BasePropagation):
     def get_field_distribution(self):
         lens_distribution = np.array(
             [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.matrix_size] for y in
+              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
         init_amplitude = np.array(
             [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
@@ -140,8 +134,8 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
 
 
 if __name__ == "__main__":
-    params = PropagationParams()
-    propagations = (ConvolutionPropagation, ConvolutionPropagationSequentialNN, ConvolutionFaithPropagation)
+    params = PropagationParams.get_example_propagation_data()
+    propagations = (ConvolutionPropagation, ConvolutionPropagationSequentialNN)
     for propagation in propagations:
         conv = propagation(params).propagate()
         plt.imshow(np.absolute(conv), interpolation='nearest')
