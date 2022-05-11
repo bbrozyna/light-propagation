@@ -89,14 +89,14 @@ class PropagationParams:
     def _positive_value_validator(self, value, expected_type):
         value = self._cast_to_type_validator(value, expected_type)
         if expected_type(value) <= 0:
-            raise ParamsValidationException(f"Matrix size should be {expected_type} greater than 0")
+            raise ParamsValidationException(f"Value should be {expected_type} greater than 0")
         return value
 
     def _cast_to_type_validator(self, value, expected_type):
         try:
             return expected_type(value)
         except ValueError:
-            raise ParamsValidationException(f"Matrix size: {value} cannot be converted to {expected_type}")
+            raise ParamsValidationException(f"{value} cannot be converted to {expected_type}")
 
     @staticmethod
     def get_wavelength_from_nu(nu):
