@@ -1,12 +1,13 @@
-import numpy as np
 import os
+import logging
+import numpy as np
 from pathlib import Path
 from matplotlib import pyplot as plt
 
 
-class GeneratePropagationReport:
+class GeneratePropagationPlot:
     def __init__(self, propagation_strategy):
-        self.propropagation_strategy = propagation_strategy
+        self.propagation_strategy = propagation_strategy
         self.output = None
 
     def __get_output(self):
@@ -15,14 +16,16 @@ class GeneratePropagationReport:
         return self.output
 
     def get_propagation_output(self):
-        return self.propropagation_strategy.propagate()
+        return self.propagation_strategy.propagate()
 
     def save_output_abs_figure(self, path):
+        logging.info("Plotting image data")
         data = np.absolute(self.__get_output())
-        self.prepare_path_to_save(path)
+        self._prepare_path_to_save(path)
         plt.imshow(data, interpolation='nearest')
         plt.savefig(path)
 
-    def prepare_path_to_save(self, path):
+    def _prepare_path_to_save(self, path):
+        logging.info('Preparing directories')
         dirs = os.path.dirname(path)
         Path(dirs).mkdir(parents=True, exist_ok=True)

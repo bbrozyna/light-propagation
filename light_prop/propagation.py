@@ -6,14 +6,14 @@ Paweł Komorowski
 pawel.komorowski@wat.edu.pl
 """
 import numpy as np
+import logging
 from scipy import signal
-from matplotlib import pyplot as plt
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Convolution2D
 
-from calculations import h, gaussian, lens
-from propagation_params import PropagationParams
+from light_prop.calculations import h, gaussian, lens
+from light_prop.propagation_params import PropagationParams
 
 
 class BasePropagation:
@@ -21,6 +21,7 @@ class BasePropagation:
         self.params = propagation_params
 
     def propagate(self):
+        logging.info("Calculating propagation")
         field_distribution = self.get_field_distribution()
         field_modifier = self.get_field_modifier()
         return self.calculate_propagation(field_distribution, field_modifier)
@@ -132,12 +133,3 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
     def calculate_propagation(self, field_distribution, field_modifier):
         conv = field_modifier(field_distribution)
         return conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 0] + 1j * conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
-
-
-if __name__ == "__main__":
-    params = PropagationParams.get_example_propagation_data()
-    propagations = (ConvolutionPropagation, ConvolutionPropagationSequentialNN)
-    for propagation in propagations:
-        conv = propagation(params).propagate()
-        plt.imshow(np.absolute(conv), interpolation='nearest')
-        plt.show()

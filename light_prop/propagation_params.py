@@ -1,3 +1,7 @@
+import json
+import logging
+
+
 class ParamsValidationException(Exception):
     pass
 
@@ -6,8 +10,11 @@ class PropagationParams:
     c = 299792458
 
     def __init__(self, matrix_size, nu, wavelength, sigma, focal_length, distance, pixel):
+        logging.info("Loading propagation params")
         self.matrix_size = matrix_size
         self.nu = nu
+        if not wavelength:
+            wavelength = PropagationParams.get_wavelength_from_nu(self.nu)
         self.wavelength = wavelength
         self.sigma = sigma
         self.focal_length = focal_length
@@ -23,7 +30,7 @@ class PropagationParams:
 
     @matrix_size.setter
     def matrix_size(self, size):
-        self._matrix_size = self.positive_integer_validator(size)
+        self._matrix_size = self._positive_integer_validator(size)
 
     @property
     def nu(self):
@@ -31,7 +38,7 @@ class PropagationParams:
 
     @nu.setter
     def nu(self, value):
-        self._nu = self.positive_integer_validator(value)
+        self._nu = self._positive_integer_validator(value)
 
     @property
     def wavelength(self):
@@ -39,7 +46,7 @@ class PropagationParams:
 
     @wavelength.setter
     def wavelength(self, value):
-        self._wavelength = self.positive_float_validator(value)
+        self._wavelength = self._positive_float_validator(value)
 
     @property
     def sigma(self):
@@ -47,7 +54,7 @@ class PropagationParams:
 
     @sigma.setter
     def sigma(self, value):
-        self._sigma = self.positive_integer_validator(value)
+        self._sigma = self._positive_integer_validator(value)
 
     @property
     def focal_length(self):
@@ -55,7 +62,7 @@ class PropagationParams:
 
     @focal_length.setter
     def focal_length(self, value):
-        self._focal_length = self.cast_to_type_validator(value, expected_type=int)
+        self._focal_length = self._cast_to_type_validator(value, expected_type=int)
 
     @property
     def distance(self):
@@ -63,7 +70,7 @@ class PropagationParams:
 
     @distance.setter
     def distance(self, value):
-        self._distance = self.cast_to_type_validator(value, expected_type=int)
+        self._distance = self._cast_to_type_validator(value, expected_type=int)
 
     @property
     def pixel(self):
@@ -71,32 +78,36 @@ class PropagationParams:
 
     @pixel.setter
     def pixel(self, value):
-        self._pixel = self.positive_float_validator(value)
+        self._pixel = self._positive_float_validator(value)
 
-    def positive_float_validator(self, value):
-        return self.positive_value_validator(value, expected_type=float)
+    def _positive_float_validator(self, value):
+        return self._positive_value_validator(value, expected_type=float)
 
-    def positive_integer_validator(self, value):
-        return self.positive_value_validator(value, expected_type=int)
+    def _positive_integer_validator(self, value):
+        return self._positive_value_validator(value, expected_type=int)
 
-    def positive_value_validator(self, value, expected_type):
-        value = self.cast_to_type_validator(value, expected_type)
+    def _positive_value_validator(self, value, expected_type):
+        value = self._cast_to_type_validator(value, expected_type)
         if expected_type(value) <= 0:
             raise ParamsValidationException(f"Matrix size should be {expected_type} greater than 0")
         return value
 
-    def cast_to_type_validator(self, value, expected_type):
+    def _cast_to_type_validator(self, value, expected_type):
         try:
             return expected_type(value)
         except ValueError:
             raise ParamsValidationException(f"Matrix size: {value} cannot be converted to {expected_type}")
+
+    @staticmethod
+    def get_wavelength_from_nu(nu):
+        return PropagationParams.c / nu * 10 ** -6
 
     @classmethod
     def get_example_propagation_data(cls):
         data = {
             "matrix_size": 256,
             "nu": 140,
-            "wavelength": PropagationParams.c / 140 * 10 ** -6,
+            "wavelength": PropagationParams.get_wavelength_from_nu(140),
             "sigma": 20,
             "focal_length": 500,
             "distance": 500,
@@ -107,3 +118,9 @@ class PropagationParams:
     @classmethod
     def get_params_from_dict(cls, params_dict):
         return cls(**params_dict)
+
+    @classmethod
+    def get_params_from_json_file(cls, json_file):
+        with open(json_file) as file:
+            data = json.load(file)
+        return PropagationParams.get_params_from_dict(data)
