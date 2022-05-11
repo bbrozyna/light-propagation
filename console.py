@@ -29,10 +29,10 @@ def get_supported_propagations():
 
 def get_parsed_input():
     propagation_choices = get_supported_propagations().keys()
-    parser = PropagationArgParser('Reads json input and calculates propagation matrix with given method', epilog='That\'s all folks')
+    parser = PropagationArgParser('Calculates propagation matrix with given method based on params in json input. Output is save as an image in given path')
     parser.add_argument('json', type=str, help='Json file to retrieve data')
     parser.add_argument('-m', '--method', choices=propagation_choices, help='Method used to calculate output matrix')
-    parser.add_argument('--path', type=str, help='Path to file output')
+    parser.add_argument('--path', type=str, default='outs/out.png', help='Path to save output')
     return parser.parse_args()
 
 
