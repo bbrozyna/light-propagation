@@ -24,6 +24,7 @@ class GeneratePropagationPlot:
         self._prepare_path_to_save(path)
         plt.imshow(data, interpolation='nearest')
         plt.savefig(path)
+        logging.info("Generated")
 
     def _prepare_path_to_save(self, path):
         logging.info('Preparing directories')
