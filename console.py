@@ -3,7 +3,7 @@ import argparse
 import logging
 
 from light_prop.propagation_params import PropagationParams
-from light_prop.propagation import ConvolutionPropagation, ConvolutionFaithPropagation, ConvolutionPropagationSequentialNN
+from light_prop.propagation import ConvolutionPropagation, ConvolutionFaithPropagation, ConvolutionPropagationSequentialNN, NNPropagation
 from light_prop.visualisation import GeneratePropagationPlot
 
 
@@ -23,6 +23,7 @@ def get_supported_propagations():
         "conv": ConvolutionPropagation,
         "faith": ConvolutionFaithPropagation,
         "sequential": ConvolutionPropagationSequentialNN,
+        "NN": NNPropagation,
     }
     return propagations
 
