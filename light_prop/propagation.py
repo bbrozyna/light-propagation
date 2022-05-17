@@ -13,6 +13,7 @@ from keras.models import Sequential
 from keras.layers import Convolution2D
 from keras.models import backend as K
 import tensorflow as tf
+from matplotlib import pyplot as plt
 
 from light_prop.calculations import h, gaussian, lens
 from light_prop.propagation_params import PropagationParams
@@ -178,14 +179,20 @@ class NNPropagation(ConvolutionPropagation):
         super().__init__(propagation_params)
 
     def get_field_distribution(self):
+        lens_distribution = np.array(
+            [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
+              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
+             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
         init_amplitude = np.array(
             [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
               np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-        field = init_amplitude
-        field = np.array([[[np.real(field)[i, j], np.imag(field)[i, j]] for i in range(self.params.matrix_size)] for j in range(self.params.matrix_size)])
-          
-        return field.reshape((1, 2, self.params.matrix_size, self.params.matrix_size,), order='F')
+                
+        field = np.array([np.real(init_amplitude * lens_distribution),np.imag(init_amplitude * lens_distribution)])
+        
+        field = field.reshape((1, 2, self.params.matrix_size, self.params.matrix_size,), order='F')
+        
+        return field
 
     def custom_weights(self, shape, dtype=None, re=False):
         func = np.sin if re else np.cos
@@ -196,7 +203,6 @@ class NNPropagation(ConvolutionPropagation):
                            np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
         kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size, 1, 1)
         return kernel
-
     def custom_weights_Re(self, shape, dtype=None):
         return self.custom_weights(shape, dtype, re=True)
 
@@ -220,13 +226,13 @@ class NNPropagation(ConvolutionPropagation):
         x = Aexp()(inputs)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
-        x = structure(kernel_initializer=self.custom_weights_lens)(x)
+        x = structure(kernel_initializer=keras.initializers.Zeros())(x)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
         x = ReIm_convert()(x)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
-        Re = keras.layers.Cropping2D(cropping=((1, 0), 0))(x)
+        Re = keras.layers.Cropping2D(cropping=((-1, 0), 0))(x)
         Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
         Im = keras.layers.Cropping2D(cropping=((0, 1), 0))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)

@@ -4,12 +4,11 @@ import numpy as np
 from pathlib import Path
 from matplotlib import pyplot as plt
 
-
 class GeneratePropagationPlot:
     def __init__(self, propagation_strategy):
         self.propagation_strategy = propagation_strategy
         self.output = None
-
+        
     def __get_output(self):
         if not self.output:
             self.output = self.get_propagation_output()
