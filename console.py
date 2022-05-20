@@ -44,6 +44,7 @@ def build_generator_with_options(options):
     prop_strat = prop_strat(propagation_params=prop_params)
     return GeneratePropagationPlot(propagation_strategy=prop_strat)
 
+
 def default_path(options):
     json_filename = options.json
     prop_params = PropagationParams.get_params_from_json_file(json_filename)
@@ -52,12 +53,11 @@ def default_path(options):
         options.method,
         "_size"+str(prop_params.matrix_size),
         "_pixel"+str(prop_params.pixel),
-        #"_nu"+str(prop_params.nu),
         "_sigma"+str(prop_params.sigma),
-        #"_f"+str(prop_params.focal_length),
     ]    
     path = "outs/out_" + "".join(propagations) + ".png"
     return path
+
 
 def main():
     configure_logger()

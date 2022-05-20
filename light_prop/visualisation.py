@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 from matplotlib import pyplot as plt
 
+
 class GeneratePropagationPlot:
     def __init__(self, propagation_strategy):
         self.propagation_strategy = propagation_strategy
