@@ -96,9 +96,7 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
 
     def get_field_distribution(self):
         field = super().get_field_distribution()
-        field = np.array(
-            [[[np.real(field)[i, j], np.imag(field)[i, j]] for i in range(self.params.matrix_size)] for j in
-             range(self.params.matrix_size)])
+        field = np.array([[[np.real(field)[i, j], np.imag(field)[i, j]] for i in range(self.params.matrix_size)] for j in range(self.params.matrix_size)])
         return field.reshape((1, self.params.matrix_size, self.params.matrix_size, 2), order='F')
 
     def custom_weights(self, shape, dtype=None, re=False):
@@ -128,14 +126,10 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
         Im = keras.layers.Cropping2D(cropping=((0, 1), 0))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
 
-        ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
-                             use_bias=False)(Re)
-        ImRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im,
-                             use_bias=False)(Re)
-        ReIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
-                             use_bias=False)(Im)
-        ImIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im,
-                             use_bias=False)(Im)
+        ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re, use_bias=False)(Re)
+        ImRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im, use_bias=False)(Re)
+        ReIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re, use_bias=False)(Im)
+        ImIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im, use_bias=False)(Im)
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
@@ -144,8 +138,7 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
 
     def calculate_propagation(self, field_distribution, field_modifier):
         conv = field_modifier(field_distribution)
-        return conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :,
-               0] + 1j * conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
+        return conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 0] + 1j * conv.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
 
 
 class Aexp(keras.layers.Layer):
@@ -155,7 +148,6 @@ class Aexp(keras.layers.Layer):
     def call(self, inputs):
         self.A = K.sqrt(K.square(inputs[:, 0]) + K.square(inputs[:, 1]))
         self.phi = tf.math.atan2(inputs[:, 1], inputs[:, 0])
-
         return K.concatenate([self.A, self.phi], axis=1)
 
 
@@ -251,14 +243,10 @@ class NNPropagation(ConvolutionPropagation):
         Im = keras.layers.Cropping2D(cropping=((0, 1), 0))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
 
-        ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
-                             use_bias=False)(Re)
-        ImRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im,
-                             use_bias=False)(Re)
-        ReIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
-                             use_bias=False)(Im)
-        ImIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im,
-                             use_bias=False)(Im)
+        ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re, use_bias=False)(Re)
+        ImRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im, use_bias=False)(Re)
+        ReIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re, use_bias=False)(Im)
+        ImIm = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Im, use_bias=False)(Im)
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
