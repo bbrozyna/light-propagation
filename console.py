@@ -52,9 +52,9 @@ def default_path(options):
         options.method,
         "_size"+str(prop_params.matrix_size),
         "_pixel"+str(prop_params.pixel),
-        #"_nu"+str(prop_params.nu),
+        "_nu"+str(prop_params.nu),
         "_sigma"+str(prop_params.sigma),
-        #"_f"+str(prop_params.focal_length),
+        "_f"+str(prop_params.focal_length),
     ]    
     path = "outs/out_" + "".join(propagations) + ".png"
     return path
