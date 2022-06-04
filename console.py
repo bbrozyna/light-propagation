@@ -42,7 +42,8 @@ def build_generator_with_options(options):
     prop_params = PropagationParams.get_params_from_json_file(json_filename)
     prop_strat = get_supported_propagations().get(options.method)
     prop_strat = prop_strat(propagation_params=prop_params)
-    return GeneratePropagationPlot(propagation_strategy=prop_strat)
+    prop_result = prop_strat.propagate()
+    return GeneratePropagationPlot(propagation_result=prop_result)
 
 def default_path(options):
     json_filename = options.json
@@ -66,7 +67,7 @@ def main():
     
     logging.info(f"Starting propagation with params {options.__dict__}")
     plotter = build_generator_with_options(options)  
-    plotter.save_output_abs_figure(output_path)
+    plotter.save_output_as_figure(output_path)
 
 
 if __name__ == '__main__':
