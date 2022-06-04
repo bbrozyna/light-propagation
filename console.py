@@ -69,3 +69,7 @@ def main():
     logging.info(f"Starting propagation with params {options.__dict__}")
     plotter = build_generator_with_options(options)
     plotter.save_output_abs_figure(output_path)
+
+
+if __name__ == "__main__":
+    main()
