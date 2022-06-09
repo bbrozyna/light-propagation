@@ -19,8 +19,8 @@ class PropagationResult:
     def to_abs(self):
         return np.absolute(self.propagation_output)
 
-    def to_real(self):
-        return None
+    def to_intensity(self):
+        return self.to_abs() ** 2
 
-    def to_imaginary(self):
+    def to_phase(self):
         return np.angle(self.propagation_output)  # ?

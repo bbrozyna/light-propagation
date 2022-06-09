@@ -7,8 +7,8 @@ from light_prop.propagation_results import PropagationResult
 
 
 class GeneratePropagationPlot:
-    PLOT_RE = "re"
-    PLOT_IM = "im"
+    PLOT_INTENSITY = "intensity"
+    PLOT_PHASE = "phase"
     PLOT_ABS = "abs"
 
     def __init__(self, propagation_result: PropagationResult):
@@ -18,8 +18,8 @@ class GeneratePropagationPlot:
         logging.info("Plotting image data")
         plot_type = {
             self.PLOT_ABS: self.propagation_result.to_abs,
-            self.PLOT_RE: self.propagation_result.to_real,
-            self.PLOT_IM: self.propagation_result.to_imaginary,
+            self.PLOT_INTENSITY: self.propagation_result.to_intensity,
+            self.PLOT_PHASE: self.propagation_result.to_phase,
         }
         data = plot_type[output_type]()
         self._prepare_path_to_save(path)
