@@ -19,18 +19,47 @@ from light_prop.propagation_params import PropagationParams
 from light_prop.propagation_results import PropagationResult
 
 
+class PropagationInput():
+    def __init__(self, amplitude_input=None, phase_input=None):
+        self.amplitude_input = amplitude_input
+        self.phase_input = phase_input
+
+    def from_image(self, amplitude_image, phase_image):
+        pass
+
+    def from_function(self, amp_function,  params):
+        return amp_function(**params)
+
+    def get_value(self):
+        field=self.amplitude*np.exp(1j * self.phase)
+        return np.real(field), np.imag(field)
+
+class Phase(PropagationInput):
+    def calculate(self):
+        return np.array(
+            [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
+              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
+             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
+
+class Amplitude(PropagationInput):
+    def calculate(self):
+        return np.array(
+            [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
+              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
+             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
+
 class BasePropagation:
     def __int__(self, propagation_params: PropagationParams):
         self.params = propagation_params
 
-    def propagate(self):
+    def propagate(self, propagation_input):
         logging.info("Calculating propagation")
-        field_distribution = self.get_field_distribution()
+        field_distribution = self.get_field_distribution(propagation_input.getValue())
         field_modifier = self.get_field_modifier()
         output = self.reshape(self.calculate_propagation(field_distribution, field_modifier))
         return PropagationResult(output)
 
-    def get_field_distribution(self):
+    def get_field_distribution(self, propagation_input=None):
         raise NotImplemented("Please implement field distribution")
 
     def get_field_modifier(self):
@@ -48,15 +77,7 @@ class ConvolutionPropagation(BasePropagation):
         super().__int__(propagation_params)
 
     def get_field_distribution(self):
-        lens_distribution = np.array(
-            [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-        init_amplitude = np.array(
-            [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-        return init_amplitude * lens_distribution
+        
 
     def get_field_modifier(self):
         hkernel = np.array(
