@@ -20,33 +20,33 @@ from light_prop.propagation_results import PropagationResult
 
 
 class PropagationInput():
-    def __init__(self, amplitude_input=None, phase_input=None):
-        self.amplitude_input = amplitude_input
-        self.phase_input = phase_input
+    def __init__(self):
+        self.amplitude = None
+        self.phase = None
 
     def from_image(self, amplitude_image, phase_image):
         pass
+    
+    def calculate_standard_lens_from_params(self, propagation_params):
+        self.phase = np.array(
+            [[lens(np.sqrt(x ** 2 + y ** 2), propagation_params.focal_length, propagation_params.wavelength) for x in
+              np.arange(-propagation_params.matrix_size / 2, propagation_params.matrix_size / 2) * propagation_params.pixel] for y in
+             np.arange(-propagation_params.matrix_size / 2, propagation_params.matrix_size / 2) * propagation_params.pixel])
+        self.amplitude = np.array(
+            [[gaussian(np.sqrt(x ** 2 + y ** 2), propagation_params.sigma) for x in
+              np.arange(-propagation_params.matrix_size / 2, propagation_params.matrix_size / 2) * propagation_params.pixel] for y in
+             np.arange(-propagation_params.matrix_size / 2, propagation_params.matrix_size / 2) * propagation_params.pixel])
 
     def from_function(self, amp_function,  params):
         return amp_function(**params)
 
     def get_value(self):
-        field=self.amplitude*np.exp(1j * self.phase)
-        return np.real(field), np.imag(field)
+        if self.phase is None:
+            raise Exception("Phase not defined")
+        if self.amplitude is None:
+            raise Exception("Amplitude not defined")
+        return self.phase * self.amplitude
 
-class Phase(PropagationInput):
-    def calculate(self):
-        return np.array(
-            [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-
-class Amplitude(PropagationInput):
-    def calculate(self):
-        return np.array(
-            [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
 
 class BasePropagation:
     def __int__(self, propagation_params: PropagationParams):
@@ -54,13 +54,13 @@ class BasePropagation:
 
     def propagate(self, propagation_input):
         logging.info("Calculating propagation")
-        field_distribution = self.get_field_distribution(propagation_input.getValue())
+        field_distribution = self.get_field_distribution(propagation_input)
         field_modifier = self.get_field_modifier()
-        output = self.reshape(self.calculate_propagation(field_distribution, field_modifier))
+        output = self.reshape_output(self.calculate_propagation(field_distribution, field_modifier))
         return PropagationResult(output)
 
-    def get_field_distribution(self, propagation_input=None):
-        raise NotImplemented("Please implement field distribution")
+    def get_field_distribution(self, propagation_input):
+        return propagation_input.get_value()
 
     def get_field_modifier(self):
         raise NotImplemented("Please implement field modifier")
@@ -68,16 +68,13 @@ class BasePropagation:
     def calculate_propagation(self, field_distribution, field_modifier):
         return None
 
-    def reshape(self, data):
+    def reshape_output(self, data):
         return data
 
 
 class ConvolutionPropagation(BasePropagation):
     def __init__(self, propagation_params):
         super().__int__(propagation_params)
-
-    def get_field_distribution(self):
-        
 
     def get_field_modifier(self):
         hkernel = np.array(
@@ -99,8 +96,8 @@ class ConvolutionPropagationSequentialNN(ConvolutionPropagation):
         kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size, 1, 1)
         return kernel
 
-    def get_field_distribution(self):
-        field = super().get_field_distribution()
+    def get_field_distribution(self, propagation_input):
+        field = super().get_field_distribution(propagation_input)
         field = field.reshape(1, self.params.matrix_size, self.params.matrix_size, 1)
         return field
 
@@ -115,7 +112,7 @@ class ConvolutionPropagationSequentialNN(ConvolutionPropagation):
     def calculate_propagation(self, field_distribution, field_modifier):
         return field_modifier(field_distribution)
 
-    def reshape(self, data):
+    def reshape_output(self, data):
         return data.numpy().reshape(self.params.matrix_size, self.params.matrix_size, 1)
 
 
@@ -123,8 +120,8 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
     def __init__(self, propagation_params):
         super().__init__(propagation_params)
 
-    def get_field_distribution(self):
-        field = super().get_field_distribution()
+    def get_field_distribution(self, propagation_input):
+        field = super().get_field_distribution(propagation_input)
         field = np.array(
             [[[np.real(field)[i, j], np.imag(field)[i, j]] for i in range(self.params.matrix_size)] for j in
              range(self.params.matrix_size)])
@@ -175,7 +172,7 @@ class ConvolutionFaithPropagation(ConvolutionPropagation):
         conv = field_modifier(field_distribution)
         return conv.numpy()
 
-    def reshape(self, data):
+    def reshape_output(self, data):
         return data.reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 0] + 1j * data.numpy().reshape(
             self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
 
@@ -222,19 +219,10 @@ class NNPropagation(ConvolutionPropagation):
     def __init__(self, propagation_params):
         super().__init__(propagation_params)
 
-    def get_field_distribution(self):
-        lens_distribution = np.array(
-            [[lens(np.sqrt(x ** 2 + y ** 2), self.params.focal_length, self.params.wavelength) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-        init_amplitude = np.array(
-            [[gaussian(np.sqrt(x ** 2 + y ** 2), self.params.sigma) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-
-        field = np.array([np.real(init_amplitude * lens_distribution), np.imag(init_amplitude * lens_distribution)])
+    def get_field_distribution(self, propagation_input):
+        field = super().get_field_distribution(propagation_input)
+        field = np.array([np.real(field), np.imag(field)])
         field = field.reshape((1, 2, self.params.matrix_size, self.params.matrix_size,), order='F')
-
         return field
 
     def custom_weights(self, shape, dtype=None, re=False):
@@ -298,6 +286,6 @@ class NNPropagation(ConvolutionPropagation):
         conv = field_modifier(field_distribution)
         return conv.numpy()
 
-    def reshape(self, data):
+    def reshape_output(self, data):
         return data.reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 0] + 1j * data.numpy().reshape(
             self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
