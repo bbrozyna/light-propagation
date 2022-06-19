@@ -1,6 +1,6 @@
 import pytest
 from light_prop.propagation_params import PropagationParams
-from light_prop.propagation import ConvolutionPropagation, ConvolutionPropagationSequentialNN, NNPropagation
+from light_prop.propagation import ConvolutionPropagation, ConvolutionPropagationSequentialNN, NNPropagation, PropagationInput
 
 
 class TestPropagation:
@@ -21,5 +21,7 @@ class TestPropagation:
 
     def get_propagation_shape(self, params, propagation):
         propagation = propagation(params)
-        return propagation.get_field_distribution().shape
+        input = PropagationInput()
+        input.calculate_standard_lens_from_params(params)
+        return propagation.get_field_distribution(input).shape
 
