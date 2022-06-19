@@ -1,6 +1,7 @@
 import pytest
 from light_prop.propagation_params import PropagationParams
-from light_prop.propagation import ConvolutionPropagation, ConvolutionPropagationSequentialNN, NNPropagation, PropagationInput
+from light_prop.propagation import ConvolutionPropagation, ConvolutionPropagationSequentialNN, NNPropagation
+from light_prop.propagation_input import PropagationInput
 
 
 class TestPropagation:
@@ -13,10 +14,9 @@ class TestPropagation:
         assert self.get_propagation_shape(params, ConvolutionPropagation) == (256, 256)
 
     def test_conv_sequential_field_shape(self, params):
-        assert self.get_propagation_shape (params, ConvolutionPropagationSequentialNN) == (1, 256, 256, 1)
+        assert self.get_propagation_shape(params, ConvolutionPropagationSequentialNN) == (1, 256, 256, 1)
 
     def test_nn_propagation_field_shape(self, params):
-
         assert self.get_propagation_shape(params, NNPropagation) == (1, 2, 256, 256)
 
     def get_propagation_shape(self, params, propagation):
@@ -24,4 +24,3 @@ class TestPropagation:
         input = PropagationInput()
         input.calculate_standard_lens_from_params(params)
         return propagation.get_field_distribution(input).shape
-
