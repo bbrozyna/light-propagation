@@ -23,4 +23,4 @@ class PropagationResult:
         return self.to_abs() ** 2
 
     def to_phase(self):
-        return np.angle(self.propagation_output)  # ?
+        return np.angle(self.propagation_output)

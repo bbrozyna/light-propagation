@@ -6,6 +6,7 @@ from light_prop.propagation_params import PropagationParams
 from light_prop.propagation import ConvolutionPropagation, ConvolutionFaithPropagation, \
     ConvolutionPropagationSequentialNN, NNPropagation
 from light_prop.visualisation import GeneratePropagationPlot
+from light_prop.propagation_input import PropagationInput
 
 
 class PropagationArgParser(argparse.ArgumentParser):
@@ -44,7 +45,9 @@ def build_generator_with_options(options):
     prop_params = PropagationParams.get_params_from_json_file(json_filename)
     prop_strat = get_supported_propagations().get(options.method)
     prop_strat = prop_strat(propagation_params=prop_params)
-    prop_result = prop_strat.propagate()
+    input = PropagationInput()
+    input.calculate_standard_lens_from_params(prop_params)
+    prop_result = prop_strat.propagate(input)
     return GeneratePropagationPlot(propagation_result=prop_result)
 
 

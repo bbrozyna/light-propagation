@@ -24,6 +24,7 @@ class GeneratePropagationPlot:
         data = plot_type[output_type]()
         self._prepare_path_to_save(path)
         plt.imshow(data, interpolation='nearest')
+        logging.info(f"Saving to {path}")
         plt.savefig(path)
         logging.info("Generated")
 
