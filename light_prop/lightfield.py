@@ -21,11 +21,12 @@ class LightField:
     def to_im(self):
         return self.amplitude * np.sin(self.phase)
 
-    # def __add__(self, other):
-    #     if self.amplitude and other.amplitude:
-    #         field = self.amplitude * np.exp(self.phase) + other.amplitude * np.exp(other.phase)
-    #         self.amplitude = np.abs(field)
-    #         self.phase = np.angle(field)
-    #     else:
-    #         self.amplitude = self.amplitude or other.amplitude
-    #         self.phase = self.phase or other.phase
+    def __add__(self, other):
+        if self.amplitude.all() and other.amplitude.all():
+            field = self.amplitude * np.exp(1j * self.phase) + other.amplitude * np.exp(1j * other.phase)
+            amplitude = np.abs(field)
+            phase = np.angle(field)
+        else:
+            amplitude = self.amplitude if self.amplitude is not None else other.amplitude
+            phase = self.phase if self.phase is not None else other.phase
+        return LightField(amplitude, phase)

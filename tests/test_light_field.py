@@ -32,9 +32,9 @@ class TestLightField:
     def test_light_field_add(self, sample_amp_phase):
         lf1 = sample_amp_phase
         lf2 = sample_amp_phase
-        # res = lf1 + lf2
-        # assert res.amplitutude == np.array()
-        # assert res.phase == np.array()
+        res = lf1 + lf2
+        assert self.compare_np_arrays(res.amplitude, lf1.amplitude * 2)
+        assert self.compare_np_arrays(res.phase, lf1.phase)
 
     def compare_np_arrays(self, array1, array2):
         return np.max(array1 - array2) < 10 ** -6
