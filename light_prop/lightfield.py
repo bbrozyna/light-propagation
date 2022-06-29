@@ -2,9 +2,16 @@ import numpy as np
 
 
 class LightField:
-    def __init__(self, amp, phase):
+    def __init__(self, amp: np.array, phase: np.array):
+        if not (isinstance(amp, np.ndarray) and isinstance(phase, np.ndarray)):
+            raise Exception("Arguments must be np.array type")
+            
+        if amp.size != phase.size:
+            raise Exception("Dimensions do not match")
+
         self.amplitude = amp
         self.phase = phase
+        
 
     def to_abs(self):
         return self.amplitude
@@ -22,11 +29,19 @@ class LightField:
         return self.amplitude * np.sin(self.phase)
 
     def __add__(self, other):
-        if self.amplitude.all() and other.amplitude.all():
-            field = self.amplitude * np.exp(1j * self.phase) + other.amplitude * np.exp(1j * other.phase)
-            amplitude = np.abs(field)
-            phase = np.angle(field)
-        else:
-            amplitude = self.amplitude if self.amplitude is not None else other.amplitude
-            phase = self.phase if self.phase is not None else other.phase
+        field = self.amplitude * np.exp(1j * self.phase) + other.amplitude * np.exp(1j * other.phase)
+        amplitude = np.abs(field)
+        phase = np.angle(field)
+        return LightField(amplitude, phase)
+    
+    def __sub__(self, other):
+        field = self.amplitude * np.exp(1j * self.phase) - other.amplitude * np.exp(1j * other.phase)
+        amplitude = np.abs(field)
+        phase = np.angle(field)
+        return LightField(amplitude, phase)
+    
+    def __mul__(self, other):
+        field = self.amplitude * np.exp(1j * self.phase) * other.amplitude * np.exp(1j * other.phase)
+        amplitude = np.abs(field)
+        phase = np.angle(field)
         return LightField(amplitude, phase)
