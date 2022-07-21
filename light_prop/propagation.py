@@ -17,21 +17,21 @@ import tensorflow as tf
 from light_prop.calculations import h
 from light_prop.propagation_params import PropagationParams
 from light_prop.propagation_results import PropagationResult
-
+from light_prop.lightfield import LightField
 
 class BasePropagation:
     def __int__(self, propagation_params: PropagationParams):
         self.params = propagation_params
 
-    def propagate(self, propagation_input):
+    def propagate(self, propagation_input: LightField):
         logging.info("Calculating propagation")
         field_distribution = self.get_field_distribution(propagation_input)
         field_modifier = self.get_field_modifier()
         output = self.reshape_output(self.calculate_propagation(field_distribution, field_modifier))
-        return PropagationResult(output)
+        return LightField.from_complex_array(output)
 
     def get_field_distribution(self, propagation_input):
-        return propagation_input.get_value()
+        return propagation_input.to_complex()
 
     def get_field_modifier(self):
         raise NotImplemented("Please implement field modifier")
