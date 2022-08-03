@@ -105,7 +105,7 @@ class PropagationParams:
     @classmethod
     def get_example_propagation_data(cls):
         data = {
-            "matrix_size": 256,
+            "matrix_size": 2,
             "nu": 140,
             "wavelength": PropagationParams.get_wavelength_from_nu(140),
             "sigma": 20,

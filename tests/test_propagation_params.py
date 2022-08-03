@@ -1,6 +1,6 @@
 import pytest
 from light_prop.propagation_params import PropagationParams, ParamsValidationException
-
+from light_prop.propagation import BasePropagation
 
 class TestPropagationParams:
 
@@ -52,3 +52,18 @@ class TestPropagationParams:
             assert getattr(params, int_param) == float(proper_value2)
             with pytest.raises(ParamsValidationException, match=f"{float} greater than 0"):
                 setattr(params, int_param, xfail_negative_value)
+
+
+class TestSomething:
+    def test_something():
+        params = PropagationParams.get_example_propagation_data()
+        propagation = BasePropagation(params)
+        propagation.propagate()
+        amp_matrix = propagation.getAmplitudeMatrix()
+        visualiser = PropagationVisualizer(amp_matrix)
+        visualiser.plotAmp()
+        
+    def test_pawel_costam():
+        matrix_input = None
+        prop_res = propagate(matrix_input, params, method)
+        visualise(prop_res, visType:(amp,phase,intensity))
