@@ -102,8 +102,9 @@ class NNPropagation(ConvolutionPropagation):
         super().__init__(propagation_params)
 
     def get_field_distribution(self, propagation_input):
-        # field = super().get_field_distribution(propagation_input)
-        field = np.array([propagation_input.to_re(), propagation_input.to_im()])
+        field = super().get_field_distribution(propagation_input)
+        field = np.array([np.real(field), np.imag(field)])
+        # field = np.array([propagation_input.to_re(), propagation_input.to_im()])
         field = field.reshape((1, 2, self.params.matrix_size, self.params.matrix_size,), order='F')
         return field
 
@@ -145,9 +146,9 @@ class NNPropagation(ConvolutionPropagation):
         x = ReIm_convert()(x)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
-        Re = keras.layers.Cropping2D(cropping=((-1, 0),0))(x)
+        Re = keras.layers.Cropping2D(cropping=((1, 0),(0,0)))(x)
         Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
-        Im = keras.layers.Cropping2D(cropping=((0, 1), 0))(x)
+        Im = keras.layers.Cropping2D(cropping=((0, 1), (0,0)))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
 
         ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
