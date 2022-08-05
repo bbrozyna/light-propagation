@@ -86,14 +86,6 @@ class NNPropagation(ConvolutionPropagation):
     def custom_weights_Im(self, shape, dtype=None):
         return self.custom_weights(shape, dtype, re=False)
 
-    def custom_weights_lens(self, shape, dtype=None):
-        kernel = np.array(
-            [[(-2 * np.pi) / self.params.wavelength * np.sqrt(x ** 2 + y ** 2 + self.params.focal_length ** 2) for x in
-              np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel] for y in
-             np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel])
-        kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size)
-        return kernel
-
     def get_field_modifier(self):
         inputs = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
         # x=keras.layers.Reshape((2,size,size))(inputs)
