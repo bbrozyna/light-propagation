@@ -1,12 +1,10 @@
 import pytest
-from light_prop.propagation_params import PropagationParams
-from light_prop.propagation import ConvolutionPropagation, NNPropagation
-from light_prop.propagation_input import PropagationInput
+from light_prop.propagation.params import PropagationParams
+from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
 from light_prop.lightfield import LightField
 import light_prop.calculations as calc
 import numpy as np
 from light_prop.calculations import compare_np_arrays
-
 
 
 class TestPropagation:
@@ -51,4 +49,3 @@ class TestPropagation:
         output_field = conv.propagate(field)
 
         assert compare_np_arrays(expected_result, output_field.to_abs())
-

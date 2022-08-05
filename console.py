@@ -2,11 +2,8 @@ import sys
 import argparse
 import logging
 
-from light_prop.propagation_params import PropagationParams
-from light_prop.propagation import ConvolutionPropagation, ConvolutionFaithPropagation, \
-    ConvolutionPropagationSequentialNN, NNPropagation
-from light_prop.visualisation import GeneratePropagationPlot
-from light_prop.propagation_input import PropagationInput
+from light_prop.propagation.params import PropagationParams
+from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
 
 
 class PropagationArgParser(argparse.ArgumentParser):
@@ -23,8 +20,6 @@ def configure_logger():
 def get_supported_propagations():
     propagations = {
         "conv": ConvolutionPropagation,
-        "faith": ConvolutionFaithPropagation,
-        "sequential": ConvolutionPropagationSequentialNN,
         "NN": NNPropagation,
     }
     return propagations
@@ -41,14 +36,15 @@ def get_parsed_input():
 
 
 def build_generator_with_options(options):
-    json_filename = options.json
-    prop_params = PropagationParams.get_params_from_json_file(json_filename)
-    prop_strat = get_supported_propagations().get(options.method)
-    prop_strat = prop_strat(propagation_params=prop_params)
-    input = PropagationInput()
-    input.calculate_standard_lens_from_params(prop_params)
-    prop_result = prop_strat.propagate(input)
-    return GeneratePropagationPlot(propagation_result=prop_result)
+    # json_filename = options.json
+    # prop_params = PropagationParams.get_params_from_json_file(json_filename)
+    # prop_strat = get_supported_propagations().get(options.method)
+    # prop_strat = prop_strat(propagation_params=prop_params)
+    # input = PropagationInput()
+    # input.calculate_standard_lens_from_params(prop_params)
+    # prop_result = prop_strat.propagate(input)
+    # return GeneratePropagationPlot(propagation_result=prop_result)
+    pass
 
 
 def default_path(options):
@@ -72,9 +68,9 @@ def main():
     options = get_parsed_input()
     output_path = options.path or default_path(options)
 
-    logging.info(f"Starting propagation with params {options.__dict__}")
-    plotter = build_generator_with_options(options)
-    plotter.save_output_as_figure(output_path)
+    # logging.info(f"Starting propagation with params {options.__dict__}")
+    # plotter = build_generator_with_options(options)
+    # plotter.save_output_as_figure(output_path)
 
 
 if __name__ == "__main__":

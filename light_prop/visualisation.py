@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from matplotlib import pyplot as plt
 
-from light_prop.propagation_results import PropagationResult
+from light_prop.lightfield import LightField
 
 
 class GeneratePropagationPlot:
@@ -11,7 +11,7 @@ class GeneratePropagationPlot:
     PLOT_PHASE = "phase"
     PLOT_ABS = "abs"
 
-    def __init__(self, propagation_result: PropagationResult):
+    def __init__(self, propagation_result: LightField):
         self.propagation_result = propagation_result
 
     def save_output_as_figure(self, path, output_type=PLOT_ABS):

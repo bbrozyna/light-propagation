@@ -11,7 +11,6 @@ class LightField:
 
         self.amplitude = amp
         self.phase = phase
-        
 
     def to_abs(self):
         return self.amplitude

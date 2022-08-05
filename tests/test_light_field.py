@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from light_prop.lightfield import LightField
-from light_prop.propagation_params import PropagationParams
+from light_prop.propagation.params import PropagationParams
 from light_prop.calculations import compare_np_arrays
 
 
