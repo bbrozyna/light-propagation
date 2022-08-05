@@ -7,10 +7,10 @@ Created on Thu Aug  4 15:44:04 2022
 
 import numpy as np
 
-from light_prop.calculations import get_gaussian_distribution, get_lens_distribution
-from light_prop.propagation.params import PropagationParams
-from light_prop.lightfield import LightField
 from light_prop.algorithms import GerchbergSaxton
+from light_prop.calculations import get_gaussian_distribution
+from light_prop.lightfield import LightField
+from light_prop.propagation.params import PropagationParams
 from light_prop.visualisation import GeneratePropagationPlot
 
 if __name__ == "__main__":

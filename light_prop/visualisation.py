@@ -1,6 +1,7 @@
-import os
 import logging
+import os
 from pathlib import Path
+
 from matplotlib import pyplot as plt
 
 from light_prop.lightfield import LightField

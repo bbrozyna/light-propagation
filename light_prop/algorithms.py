@@ -5,8 +5,8 @@ Created on Thu Aug  4 14:09:21 2022
 @author: PK
 """
 
-import light_prop.propagation.methods as prop
 import light_prop.lightfield as lf
+import light_prop.propagation.methods as prop
 from light_prop.propagation.params import PropagationParams
 
 
