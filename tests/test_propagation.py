@@ -11,7 +11,9 @@ class TestPropagation:
 
     @pytest.fixture
     def params(self):
-        return PropagationParams.get_example_propagation_data()
+        params = PropagationParams.get_example_propagation_data()
+        params.matrix_size = 2
+        return params
 
     @pytest.fixture
     def amplitude(self, params):
