@@ -17,6 +17,7 @@ class TestPropagation:
     def amplitude(self, params):
         return get_gaussian_distribution(params)
 
+    @pytest.fixture
     def phase(self, params):
         return get_lens_distribution(params)
 
