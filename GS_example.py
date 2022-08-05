@@ -5,24 +5,19 @@ Created on Thu Aug  4 15:44:04 2022
 @author: PK
 """
 
+import numpy as np
+
+from light_prop.calculations import get_gaussian_distribution, get_lens_distribution
 from light_prop.propagation.params import PropagationParams
 from light_prop.lightfield import LightField
-import light_prop.calculations as calc
-import numpy as np
 from light_prop.algorithms import GerchbergSaxton
 from light_prop.visualisation import GeneratePropagationPlot
-
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
-    target_sigma = 2
-
-    target = amp = np.array(
-        [[calc.gaussian(np.sqrt(x ** 2 + y ** 2), target_sigma) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
-
+    params.sigma = 2
+    target = amp = get_gaussian_distribution(params)
     phase = np.array(
         [[0 for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
