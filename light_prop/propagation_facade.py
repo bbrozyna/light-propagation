@@ -19,8 +19,3 @@ class PropagationFacade:
         lf = LightField(field.amp, field.phase)
         method = propagation_method(self.params)
         return method.propagate(lf)
-
-
-if __name__ == "__main__":
-    print("CHUJU")
-
