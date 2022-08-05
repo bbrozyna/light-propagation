@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
 from light_prop.calculations import compare_np_arrays
@@ -71,5 +72,3 @@ class TestLightField:
         assert compare_np_arrays(res.phase, lf1.phase + lf2.phase)
         assert compare_np_arrays(res2.amplitude, lf1.amplitude * lf2.amplitude)
         assert compare_np_arrays(res2.phase, lf1.phase + lf2.phase)
-
-

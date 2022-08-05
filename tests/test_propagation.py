@@ -1,9 +1,9 @@
 import pytest
+import numpy as np
+
 from light_prop.propagation.params import PropagationParams
 from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
 from light_prop.lightfield import LightField
-import light_prop.calculations as calc
-import numpy as np
 from light_prop.calculations import compare_np_arrays, get_lens_distribution, get_gaussian_distribution
 
 
