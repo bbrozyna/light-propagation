@@ -2,7 +2,7 @@
 """
 Created on Thu Aug  4 14:09:21 2022
 
-@author: dr PK & eng BB
+@author: dr PK & be BB with mse MD
 """
 
 import light_prop.propagation.methods as prop
