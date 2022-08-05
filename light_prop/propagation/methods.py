@@ -22,7 +22,7 @@ class BasePropagation:
     def __int__(self, propagation_params: PropagationParams):
         self.params = propagation_params
 
-    def propagate(self, propagation_input: LightField):
+    def propagate(self, propagation_input: LightField) -> LightField:
         logging.info("Calculating propagation")
         field_distribution = self.get_field_distribution(propagation_input)
         field_modifier = self.get_field_modifier()
@@ -106,9 +106,9 @@ class NNPropagation(ConvolutionPropagation):
         x = ReIm_convert()(x)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
-        Re = keras.layers.Cropping2D(cropping=((1, 0),(0,0)))(x)
+        Re = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(x)
         Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
-        Im = keras.layers.Cropping2D(cropping=((0, 1), (0,0)))(x)
+        Im = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
 
         ReRe = Convolution2D(1, self.params.matrix_size, padding="same", kernel_initializer=self.custom_weights_Re,
