@@ -27,8 +27,6 @@ if __name__ == "__main__":
 
     res = GS.optimize(LightField(amp, phase), LightField(target, phase), 5)
 
-    plotter = GeneratePropagationPlot(res[1])
+    plotter = GeneratePropagationPlot(res)
     plotter.save_output_as_figure("outs/structure.png", output_type=GeneratePropagationPlot.PLOT_PHASE)
-
-    plotter2 = GeneratePropagationPlot(res[0])
-    plotter2.save_output_as_figure("outs/result.png", output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter.save_output_as_figure("outs/result.png", output_type=GeneratePropagationPlot.PLOT_ABS)
