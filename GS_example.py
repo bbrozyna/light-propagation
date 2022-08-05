@@ -18,11 +18,6 @@ if __name__ == "__main__":
 
     target_sigma = 2
 
-    amp = np.array(
-        [[calc.gaussian(np.sqrt(x ** 2 + y ** 2), params.sigma) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
-
     target = amp = np.array(
         [[calc.gaussian(np.sqrt(x ** 2 + y ** 2), target_sigma) for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
