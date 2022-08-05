@@ -9,4 +9,3 @@ if __name__ == "__main__":
     out = PropagationFacade(params).progagate(ConvolutionPropagation)
     plt.imshow(out.to_abs(), interpolation='nearest')
     plt.show()
-
