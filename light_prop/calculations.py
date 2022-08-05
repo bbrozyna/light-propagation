@@ -1,8 +1,11 @@
 import numpy as np
 
+from light_prop.propagation.params import PropagationParams
+
 
 def h(r, distance, wavelength):
-    return np.exp(1j * 2 * np.pi / (wavelength * distance)) / (1j * wavelength * distance) * np.exp(1j * 2 * np.pi / (wavelength * 2 * distance) * r * r)
+    return np.exp(1j * 2 * np.pi / (wavelength * distance)) / (1j * wavelength * distance) * np.exp(
+        1j * 2 * np.pi / (wavelength * 2 * distance) * r * r)
 
 
 def gaussian(what_is_r, variance):
@@ -15,3 +18,17 @@ def lens(r, focal_length, wavelength):
 
 def compare_np_arrays(array1, array2):
     return np.max(array1 - array2) < 10 ** -6
+
+
+def get_lens_distribution(params: PropagationParams):
+    return np.array(
+        [[lens(np.sqrt(x ** 2 + y ** 2), params.focal_length, params.wavelength) for x in
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+
+
+def get_gaussian_distribution(params: PropagationParams):
+    return np.array(
+        [[gaussian(np.sqrt(x ** 2 + y ** 2), params.sigma) for x in
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
