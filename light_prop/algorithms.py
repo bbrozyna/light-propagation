@@ -15,15 +15,15 @@ class GerchbergSaxton:
         self.params = propagation_params
 
     def optimize(self, input_field: LightField, target_field: LightField, iterations: int):
-        temp_plane = target_field
+        output_plane = target_field
         input_plane = None
 
         for i in range(iterations):
-            temp_plane.amplitude = target_field.amplitude
+            output_plane.amplitude = target_field.amplitude
             self.params.distance *= -1
-            input_plane = prop.ConvolutionPropagation(self.params).propagate(temp_plane)
+            input_plane = prop.ConvolutionPropagation(self.params).propagate(output_plane)
             input_plane.amplitude = input_field.amplitude
             self.params.distance *= -1
-            temp_plane = prop.ConvolutionPropagation(self.params).propagate(temp_plane)
+            output_plane = prop.ConvolutionPropagation(self.params).propagate(input_plane)
 
-        return input_plane
+        return (input_plane, output_plane)

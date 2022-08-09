@@ -17,7 +17,9 @@ if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
     params.sigma = 2
-    target = amp = get_gaussian_distribution(params)
+    target = get_gaussian_distribution(params)
+    params.sigma = 20
+    amp = get_gaussian_distribution(params)
     phase = np.array(
         [[0 for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
@@ -27,6 +29,7 @@ if __name__ == "__main__":
 
     res = GS.optimize(LightField(amp, phase), LightField(target, phase), 5)
 
-    plotter = GeneratePropagationPlot(res)
+    plotter = GeneratePropagationPlot(res[0])
     plotter.save_output_as_figure("outs/structure.png", output_type=GeneratePropagationPlot.PLOT_PHASE)
+    plotter = GeneratePropagationPlot(res[1])
     plotter.save_output_as_figure("outs/result.png", output_type=GeneratePropagationPlot.PLOT_ABS)

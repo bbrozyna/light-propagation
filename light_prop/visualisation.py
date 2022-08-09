@@ -28,6 +28,7 @@ class GeneratePropagationPlot:
         logging.info(f"Saving to {path}")
         plt.savefig(path)
         logging.info("Generated")
+        plt.show()
 
     def _prepare_path_to_save(self, path):
         logging.info('Preparing directories')
