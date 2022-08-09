@@ -12,13 +12,24 @@ from light_prop.calculations import get_gaussian_distribution
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
 from light_prop.visualisation import GeneratePropagationPlot
+from light_prop.calculations import gaussian
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
-    params.sigma = 2
-    target = get_gaussian_distribution(params)
-    params.sigma = 20
+    params.sigma = 4
+    params.matrix_size = 512
+    params.pixel = 0.9
+    x_shift1 = 50
+    x_shift2 = 25
+    target = np.array(
+        [[gaussian(np.sqrt((x - x_shift1) ** 2 + y ** 2), params.sigma) for x in
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel]) + np.array(
+        [[gaussian(np.sqrt((x - x_shift2) ** 2 + y ** 2), params.sigma) for x in
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+    params.sigma = 50
     amp = get_gaussian_distribution(params)
     phase = np.array(
         [[0 for x in
@@ -31,5 +42,9 @@ if __name__ == "__main__":
 
     plotter = GeneratePropagationPlot(res[0])
     plotter.save_output_as_figure("outs/structure.png", output_type=GeneratePropagationPlot.PLOT_PHASE)
+    plotter = GeneratePropagationPlot(res[0])
+    plotter.save_output_as_figure("outs/input_field.png", output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter = GeneratePropagationPlot(res[1])
     plotter.save_output_as_figure("outs/result.png", output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(LightField(target, phase))
+    plotter.save_output_as_figure("outs/target.png", output_type=GeneratePropagationPlot.PLOT_ABS)
