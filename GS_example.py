@@ -18,7 +18,7 @@ if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
     params.sigma = 4
-    params.matrix_size = 512
+    params.matrix_size = 256
     params.pixel = 0.9
     x_shift1 = 50
     x_shift2 = 25
@@ -40,11 +40,17 @@ if __name__ == "__main__":
 
     res = GS.optimize(LightField(amp, phase), LightField(target, phase), 5)
 
-    plotter = GeneratePropagationPlot(res[0])
-    plotter.save_output_as_figure("outs/structure.png", output_type=GeneratePropagationPlot.PLOT_PHASE)
-    plotter = GeneratePropagationPlot(res[0])
-    plotter.save_output_as_figure("outs/input_field.png", output_type=GeneratePropagationPlot.PLOT_ABS)
-    plotter = GeneratePropagationPlot(res[1])
-    plotter.save_output_as_figure("outs/result.png", output_type=GeneratePropagationPlot.PLOT_ABS)
-    plotter = GeneratePropagationPlot(LightField(target, phase))
-    plotter.save_output_as_figure("outs/target.png", output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(res[0], output_type=GeneratePropagationPlot.PLOT_PHASE)
+    plotter.save_output_as_figure("outs/structure.png")
+    plotter.show()
+
+    plotter = GeneratePropagationPlot(res[0], output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter.save_output_as_figure("outs/input_field.png")
+    
+    plotter = GeneratePropagationPlot(res[1], output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter.save_output_as_figure("outs/result.png")
+    plotter.show()
+
+    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter.save_output_as_figure("outs/target.png")
+    plotter.show()
