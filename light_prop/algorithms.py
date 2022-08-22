@@ -10,6 +10,7 @@ from light_prop.propagation.params import PropagationParams
 from light_prop.lightfield import LightField
 from tensorflow import keras
 import numpy as np
+import matplotlib.pyplot as plt
 
 class GerchbergSaxton:
     def __init__(self, propagation_params: PropagationParams):
@@ -32,30 +33,46 @@ class GerchbergSaxton:
 class NNTrainer:
     def __init__(self, propagation_params: PropagationParams):
         self.params = propagation_params
+        self.model = None
+        self.history = None
     
     def optimize(self, input_field: LightField, target_field: LightField, iterations: int):
-        output_plane = target_field
-        input_plane = None
         propagator = prop.NNPropagation(self.params)
-        model = propagator.get_field_modifier()
+        self.model = propagator.get_field_modifier()
 
         print("Model compiling")
-        model.compile(
-            optimizer = keras.optimizers.RMSprop(learning_rate=1e-3),
+        self.model.compile(
+            optimizer = keras.optimizers.Adam(learning_rate=3e-1),
             loss = keras.losses.MeanSquaredError(),
-            metrics = [keras.metrics.MeanSquaredError()],
+        )
+
+        checkpoint_filepath = './tmp/checkpoint'
+        model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
+            filepath=checkpoint_filepath,
+            save_weights_only=True,
+            monitor='loss',
+            mode='min',
+            save_best_only=True
         )
 
         print("Fitting model to data")
-        history = model.fit(
+        self.history = self.model.fit(
             propagator.get_field_distribution(input_field),
-            propagator.get_field_distribution(input_field).reshape((1, self.params.matrix_size, self.params.matrix_size, 2), order='F'),
+            propagator.get_field_distribution(target_field),
             batch_size = 1,
             epochs = iterations,
+            callbacks = [model_checkpoint_callback]
         )
-        
-        print("Optimization statistics")
-        print(history.history)
 
-        return model
+        self.model.load_weights(checkpoint_filepath)
+        return self.model
 
+    def plot_loss(self):
+        plt.plot(self.history.history['loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.yscale('log')
+        plt.show()
+    
+    

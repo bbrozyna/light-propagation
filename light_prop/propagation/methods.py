@@ -114,7 +114,8 @@ class NNPropagation(ConvolutionPropagation):
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
-        outputs = keras.layers.Concatenate(axis=-1)([Re, Im])
+        x = keras.layers.Concatenate(axis=-1)([Re, Im])
+        outputs = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
         return keras.Model(inputs=inputs, outputs=outputs)
 
     def calculate_propagation(self, field_distribution, field_modifier):
