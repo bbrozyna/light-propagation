@@ -11,14 +11,16 @@ if __name__ == "__main__":
 
     #Choose proper propagation parameters
     params.sigma = 2
-    params.matrix_size = 64
+    params.matrix_size = 128
     params.pixel = 0.5
 
 
     #Define target optical field and input amplitude
-    target = get_gaussian_distribution(params)
+    x0 = 0
+    y0 = 0
+    target = get_gaussian_distribution(params, x0, y0)
     params.sigma = 15
-    amp = get_gaussian_distribution(params)
+    amp = get_gaussian_distribution(params, 0, 0)
     phase = np.array(
         [[0 for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
@@ -46,6 +48,6 @@ if __name__ == "__main__":
     field = np.array([amp, phase])
     field = field.reshape((1, 2, params.matrix_size, params.matrix_size,), order='F')
     result = trained_model(field).numpy()
-    result = result.reshape(params.matrix_size, params.matrix_size, 2)[:, :, 0] + 1j * result.reshape(params.matrix_size, params.matrix_size, 2)[:, :, 1]
+    result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
     plotter = GeneratePropagationPlot(LightField.from_complex_array(result), output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/NNresult.png")

@@ -6,6 +6,7 @@ Paweł Komorowski
 pawel.komorowski@wat.edu.pl
 """
 import logging
+from re import M
 
 import numpy as np
 from keras.layers import Convolution2D
@@ -64,7 +65,6 @@ class NNPropagation(ConvolutionPropagation):
     def get_field_distribution(self, propagation_input):
         field = super().get_field_distribution(propagation_input)
         field = np.array([np.real(field), np.imag(field)])
-        # field = np.array([propagation_input.to_re(), propagation_input.to_im()])
         field = field.reshape((1, 2, self.params.matrix_size, self.params.matrix_size,), order='F')
         return field
 
@@ -88,7 +88,6 @@ class NNPropagation(ConvolutionPropagation):
 
     def get_field_modifier(self):
         inputs = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
-        # x=keras.layers.Reshape((2,size,size))(inputs)
         x = Aexp()(inputs)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
@@ -114,14 +113,22 @@ class NNPropagation(ConvolutionPropagation):
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
-        x = keras.layers.Concatenate(axis=-1)([Re, Im])
+        x = keras.layers.Concatenate(axis = 1)([Re, Im])
+        x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        x = Aexp()(x)
         outputs = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
-        return keras.Model(inputs=inputs, outputs=outputs)
+
+        model = keras.Model(inputs=inputs, outputs=outputs)
+
+        for layer in model.layers[:]:
+            layer.trainable = False
+        model.layers[3].trainable = True
+
+        return model
 
     def calculate_propagation(self, field_distribution, field_modifier):
         conv = field_modifier(field_distribution)
         return conv.numpy()
 
     def reshape_output(self, data):
-        return data.reshape(self.params.matrix_size, self.params.matrix_size, 2)[:, :, 0] + 1j * data.reshape(
-            self.params.matrix_size, self.params.matrix_size, 2)[:, :, 1]
+        return data[0, 0, :, :] * np.exp(1j * data[0, 1, :, :])

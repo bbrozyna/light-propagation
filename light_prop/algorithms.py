@@ -11,6 +11,7 @@ from light_prop.lightfield import LightField
 from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 class GerchbergSaxton:
     def __init__(self, propagation_params: PropagationParams):
@@ -36,6 +37,11 @@ class NNTrainer:
         self.model = None
         self.history = None
     
+    def amplitudeMSE(self, y_true, y_pred):
+        squared_difference = tf.square(y_true[0, 0] - y_pred[0, 0])
+        
+        return tf.reduce_mean(squared_difference, axis=-1)
+
     def optimize(self, input_field: LightField, target_field: LightField, iterations: int):
         propagator = prop.NNPropagation(self.params)
         self.model = propagator.get_field_modifier()
@@ -43,7 +49,7 @@ class NNTrainer:
         print("Model compiling")
         self.model.compile(
             optimizer = keras.optimizers.Adam(learning_rate=3e-1),
-            loss = keras.losses.MeanSquaredError(),
+            loss = self.amplitudeMSE,
         )
 
         checkpoint_filepath = './tmp/checkpoint'
