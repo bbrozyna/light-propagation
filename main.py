@@ -15,9 +15,4 @@ if __name__ == "__main__":
     axes[0].imshow(outConv.to_abs(), interpolation='nearest')
     axes[1].imshow(outNN.to_abs(), interpolation='nearest')
     plt.show()
-
-    # plotter = GeneratePropagationPlot(outConv, output_type=GeneratePropagationPlot.PLOT_ABS)
-    # #plotter.show()
-
-    # plotter = GeneratePropagationPlot(outNN, output_type=GeneratePropagationPlot.PLOT_ABS)
-    # plotter.show()
+    
