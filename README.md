@@ -29,6 +29,24 @@ optional arguments:
 
 ```
 
+`python main.py`
+
+```commandline
+Examplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
+```
+
+`python NN_training_example.py`
+
+```commandline
+Examplary usage of structure optimization through neural network optimization. 
+```
+
+`python GS_example.py`
+
+```commandline
+Examplary usage of structure optimization using Gerchberg-Saxton algorithm. 
+```
+
 #### Example:
 
 To calculate simple propagation using convolution method and save the results in `outs/test.png` try:
