@@ -17,13 +17,13 @@ from light_prop.calculations import gaussian
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
-    #Choose proper propagation parameters
+    # Choose proper propagation parameters
     params.sigma = 4
     params.matrix_size = 256
     params.pixel = 0.9
 
-    #Define target optical field and input amplitude
-    #In this example two focal points placed outside of the main optical axis
+    # Define target optical field and input amplitude
+    # In this example two focal points placed outside of the main optical axis
     x_shift1 = 50
     x_shift2 = 25
     target = np.array(
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # Plot the input amplitude
     plotter = GeneratePropagationPlot(res[0], output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/input_field.png")
-    
+
     # Plot the result - output amplitude
     plotter = GeneratePropagationPlot(res[1], output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/result.png")
