@@ -57,7 +57,7 @@ pawel.komorowski@wat.edu.pl
 
 This project is licensed under the terms of the [MIT license](/LICENSE).
 
-### Running Unit tests
+## Running Unit tests
 
 UT are written using pytest framework. To start tests use:
 
