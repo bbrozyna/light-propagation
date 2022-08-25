@@ -30,7 +30,7 @@ if __name__ == "__main__":
     NN = NNTrainer(params)
 
     # Run NN optimization
-    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), 1000)
+    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), 100)
 
     # Plot loss vs epochs
     NN.plot_loss()

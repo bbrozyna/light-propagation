@@ -48,7 +48,7 @@ class NNTrainer:
 
         print("Model compiling")
         self.model.compile(
-            optimizer = keras.optimizers.Adam(learning_rate=3e-1),
+            optimizer = keras.optimizers.Adam(learning_rate=1e-2),
             loss = self.amplitudeMSE,
         )
 
