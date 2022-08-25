@@ -26,7 +26,7 @@ class TestPropagationParams:
                 setattr(params, int_param, xfail_value_not_convertable)
 
     def test_positive_int_params(self, params):
-        positive_int_params = ["matrix_size", "nu", "sigma"]
+        positive_int_params = ["matrix_size"]
         proper_value = 5
         xfail_zero = 0
         xfail_negative_value = -1
@@ -40,7 +40,7 @@ class TestPropagationParams:
                 setattr(params, int_param, xfail_zero)
 
     def test_positive_float_params(self, params):
-        positive_float_params = ["wavelength", "pixel"]
+        positive_float_params = ["wavelength", "pixel", "nu", "sigma"]
         proper_value = 5
         proper_value2 = "5.3"
         xfail_negative_value = -1
