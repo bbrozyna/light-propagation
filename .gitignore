@@ -11,4 +11,5 @@ dist/
 
 #environments and IDE configs
 env/
+tmp/
 .idea/

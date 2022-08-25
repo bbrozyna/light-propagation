@@ -11,7 +11,7 @@ class PropagationFacade:
 
     def generate_field(self):
         Field = namedtuple("Field", ["amp", "phase"])
-        field = Field(amp=get_gaussian_distribution(self.params), phase=get_lens_distribution(self.params))
+        field = Field(amp=get_gaussian_distribution(self.params, 0, 0), phase=get_lens_distribution(self.params))
         return field
 
     def progagate(self, propagation_method) -> LightField:

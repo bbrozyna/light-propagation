@@ -38,7 +38,7 @@ class PropagationParams:
 
     @nu.setter
     def nu(self, value):
-        self._nu = self._positive_integer_validator(value)
+        self._nu = self._positive_float_validator(value)
 
     @property
     def wavelength(self):
@@ -54,7 +54,7 @@ class PropagationParams:
 
     @sigma.setter
     def sigma(self, value):
-        self._sigma = self._positive_integer_validator(value)
+        self._sigma = self._positive_float_validator(value)
 
     @property
     def focal_length(self):
