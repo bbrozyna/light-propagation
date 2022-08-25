@@ -5,7 +5,7 @@ on [article](https://www.researchgate.net/publication/357437782_Neural-network_b
 
 ## Installation
 
-Due to dependencies it is suggested to run this app in separate virtual environment like venv.
+Due to dependencies, it is suggested to run this app in a separate virtual environment like venv.
 
 #### Creating virtual environment
 
@@ -25,17 +25,17 @@ Activation (on Windows run activate.exe)
 
 ****For a quick start, please refer to our examples:****
 
-1. Examplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
+1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
 ```commandline
     python main.py
 ```
 
-2. Examplary usage of structure optimization through neural network optimization
+2. Exemplary usage of structure optimization through neural network optimization
 ```commandline
     python NN_training_example.py
 ```
 
-3. Examplary usage of structure optimization using Gerchberg-Saxton algorithm.
+3. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
 ```commandline
     python GS_example.py
 ```
