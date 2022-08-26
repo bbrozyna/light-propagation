@@ -18,7 +18,7 @@ if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
-    params.sigma = 4
+    params.beam_diameter = 4
     params.matrix_size = 256
     params.pixel = 0.9
 
@@ -27,13 +27,13 @@ if __name__ == "__main__":
     x_shift1 = 50
     x_shift2 = 25
     target = np.array(
-        [[gaussian(np.sqrt((x - x_shift1) ** 2 + y ** 2), params.sigma) for x in
+        [[gaussian(np.sqrt((x - x_shift1) ** 2 + y ** 2), params.beam_diameter) for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel]) + np.array(
-        [[gaussian(np.sqrt((x - x_shift2) ** 2 + y ** 2), params.sigma) for x in
+        [[gaussian(np.sqrt((x - x_shift2) ** 2 + y ** 2), params.beam_diameter) for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
-    params.sigma = 50
+    params.beam_diameter = 50
     amp = get_gaussian_distribution(params)
     phase = np.array(
         [[0 for x in

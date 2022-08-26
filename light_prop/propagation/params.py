@@ -8,15 +8,22 @@ class ParamsValidationException(Exception):
 
 class PropagationParams:
     c = 299792458
+    # matrix_size - number of pixels on the side of square calculation matrix_size
+    # nu - frequency in [GHz]
+    # wavelength - wavelength of EM radiation in [mm]
+    # beam_diameter - sigma parameter of Gaussian beam in [mm]
+    # focal_length - focusing distance in [mm]
+    # distance - propagation distance in [mm]
+    # pixel - dimensions of the pixels used in calculations [mm]
 
-    def __init__(self, matrix_size, nu, wavelength, sigma, focal_length, distance, pixel):
+    def __init__(self, matrix_size, nu, wavelength, beam_diameter, focal_length, distance, pixel):
         logging.info("Loading propagation params")
         self.matrix_size = matrix_size
         self.nu = nu
         if not wavelength:
             wavelength = PropagationParams.get_wavelength_from_nu(self.nu)
         self.wavelength = wavelength
-        self.sigma = sigma
+        self.beam_diameter = beam_diameter
         self.focal_length = focal_length
         self.distance = distance
         self.pixel = pixel
@@ -49,12 +56,12 @@ class PropagationParams:
         self._wavelength = self._positive_float_validator(value)
 
     @property
-    def sigma(self):
-        return self._sigma
+    def beam_diameter(self):
+        return self._beam_diameter
 
-    @sigma.setter
-    def sigma(self, value):
-        self._sigma = self._positive_float_validator(value)
+    @beam_diameter.setter
+    def beam_diameter(self, value):
+        self._beam_diameter = self._positive_float_validator(value)
 
     @property
     def focal_length(self):
@@ -108,7 +115,7 @@ class PropagationParams:
             "matrix_size": 128,
             "nu": 140,
             "wavelength": PropagationParams.get_wavelength_from_nu(140),
-            "sigma": 20,
+            "beam_diameter": 20,
             "focal_length": 500,
             "distance": 500,
             "pixel": 1

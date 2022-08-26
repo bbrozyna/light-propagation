@@ -10,7 +10,7 @@ if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
-    params.sigma = 2
+    params.beam_diameter = 2
     params.matrix_size = 128
     params.pixel = 0.5
 
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     x0 = 0
     y0 = 0
     target = get_gaussian_distribution(params, x0, y0)
-    params.sigma = 15
+    params.beam_diameter = 15
     amp = get_gaussian_distribution(params, 0, 0)
     phase = np.array(
         [[0 for x in
