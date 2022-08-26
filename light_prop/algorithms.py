@@ -18,7 +18,7 @@ class GerchbergSaxton:
     def __init__(self, propagation_params: PropagationParams):
         self.params = propagation_params
 
-    def optimize(self, input_field: LightField, target_field: LightField, iterations: int):
+    def optimize(self, input_field: LightField, target_field: LightField, iterations: int = 5):
         output_plane = target_field
         input_plane = None
 
@@ -44,7 +44,7 @@ class NNTrainer:
 
         return tf.reduce_mean(squared_difference, axis=-1)
 
-    def optimize(self, input_field: LightField, target_field: LightField, iterations: int):
+    def optimize(self, input_field: LightField, target_field: LightField, iterations: int = 100):
         propagator = prop.NNPropagation(self.params)
         self.model = propagator.get_field_modifier()
 

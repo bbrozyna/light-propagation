@@ -32,13 +32,16 @@ if __name__ == "__main__":
     # Run NN optimization
     # Please try running different numbers of epochs (last parameter)
     # Check the difference in the output for different amounts of training
-    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), 100)
+    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations = 100)
 
     # Plot loss vs epochs
     NN.plot_loss()
 
+    # Extract the optimized phase map from the trainable layer
+    optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
+    
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(LightField(amp, np.array(trained_model.layers[3].get_weights()[0])),
+    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase),
                                       output_type=GeneratePropagationPlot.PLOT_PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
@@ -51,10 +54,16 @@ if __name__ == "__main__":
     plotter.save_output_as_figure("outs/NNinput.png")
 
     # Plot the result - output amplitude
+
+    # Prepare input field
     field = np.array([amp, phase])
     field = field.reshape((1, 2, params.matrix_size, params.matrix_size,), order='F')
+
+    # Evaluate model on the input field
     result = trained_model(field).numpy()
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
+
+    # Plot the result
     plotter = GeneratePropagationPlot(LightField.from_complex_array(result),
                                       output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/NNresult.png")

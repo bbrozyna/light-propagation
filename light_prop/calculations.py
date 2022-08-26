@@ -29,6 +29,6 @@ def get_lens_distribution(params: PropagationParams):
 
 def get_gaussian_distribution(params: PropagationParams, x0: float = 0, y0: float = 0):
     return np.array(
-        [[gaussian(np.sqrt((x-x0) ** 2 + (y-y0) ** 2), params.sigma) for x in
+        [[gaussian(np.sqrt((x-x0) ** 2 + (y-y0) ** 2), params.beam_diameter) for x in
           np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])

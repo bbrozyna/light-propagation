@@ -44,19 +44,19 @@ if __name__ == "__main__":
     GS = GerchbergSaxton(params)
 
     # Run optimizer
-    res = GS.optimize(LightField(amp, phase), LightField(target, phase), 5)
+    input_plane, output_plane = GS.optimize(LightField(amp, phase), LightField(target, phase), iterations = 3)
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(res[0], output_type=GeneratePropagationPlot.PLOT_PHASE)
+    plotter = GeneratePropagationPlot(input_plane, output_type=GeneratePropagationPlot.PLOT_PHASE)
     plotter.save_output_as_figure("outs/structure.png")
     plotter.show()
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(res[0], output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(input_plane, output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/input_field.png")
 
     # Plot the result - output amplitude
-    plotter = GeneratePropagationPlot(res[1], output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(output_plane, output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/result.png")
     plotter.show()
 
