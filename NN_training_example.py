@@ -1,10 +1,10 @@
 import numpy as np
+
 from light_prop.algorithms import NNTrainer
 from light_prop.calculations import get_gaussian_distribution
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
 from light_prop.visualisation import GeneratePropagationPlot
-
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
@@ -32,14 +32,14 @@ if __name__ == "__main__":
     # Run NN optimization
     # Please try running different numbers of epochs (last parameter)
     # Check the difference in the output for different amounts of training
-    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations = 100)
+    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations=100)
 
     # Plot loss vs epochs
     NN.plot_loss()
 
     # Extract the optimized phase map from the trainable layer
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
-    
+
     # Plot the result - optimized phase map
     plotter = GeneratePropagationPlot(LightField(amp, optimized_phase),
                                       output_type=GeneratePropagationPlot.PLOT_PHASE)
