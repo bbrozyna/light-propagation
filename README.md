@@ -36,6 +36,32 @@ To calculate simple propagation using convolution method and save the results in
 `python console.py params.json --method conv --path outs/test.png`
 
 
+### Linting
+
+To support linting and unify styling we suggest to use [pre-commit](https://pre-commit.com)
+#### pre-commit installation
+
+    pip install pre-commit
+
+#### pre-commit usage
+
+**Running pre-commit automatically**
+
+To run validation automatically before each commit, please use:
+
+    pre-commit install
+
+This will add pre-commit to git hooks and perform all the checks defined in `.pre-commit-config.yaml` 
+
+**Running pre-commit manually**
+
+To check stying in all files, please use
+
+    pre-commit run -a
+
+#### pre-commit in CI
+Every pull request should pass pre-commit stage to be merged
+
 ### Running Unit tests
 UT are written using pytest framework. To start tests use:
 
