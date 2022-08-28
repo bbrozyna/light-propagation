@@ -22,13 +22,8 @@ if __name__ == "__main__":
     amp = get_gaussian_distribution(params, 0, 0)
     phase = np.array(
         [
-            [
-                0
-                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2)
-                * params.pixel
-            ]
-            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2)
-            * params.pixel
+            [0 for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel
         ]
     )
 
@@ -48,14 +43,10 @@ if __name__ == "__main__":
     )
     plotter.save_output_as_figure("outs/NNstructure.png")
 
-    plotter = GeneratePropagationPlot(
-        LightField(target, phase), output_type=GeneratePropagationPlot.PLOT_ABS
-    )
+    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/NNtarget.png")
 
-    plotter = GeneratePropagationPlot(
-        LightField(amp, phase), output_type=GeneratePropagationPlot.PLOT_ABS
-    )
+    plotter = GeneratePropagationPlot(LightField(amp, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
     plotter.save_output_as_figure("outs/NNinput.png")
 
     field = np.array([amp, phase])
