@@ -1,42 +1,64 @@
-# Light - propagation
-Console app made to calculate field distribution transformation using the given propagation method based on [article](https://www.researchgate.net/publication/357437782_Neural-network_based_approach_to_optimize_THz_computer_generated_holograms)
+# Light propagation
 
-### Currently supported method
-1. FFT convolution
-2. Neural Networks convolution
+Python app made to calculate field distribution transformation using the given propagation method based
+on [article](https://www.researchgate.net/publication/357437782_Neural-network_based_approach_to_optimize_THz_computer_generated_holograms)
 
-### Installation
-Due to dependencies it is suggested to run this app in separate virtual environment
+## Installation
+
+Due to dependencies, it is suggested to run this app in a separate virtual environment like venv.
+
+#### Creating virtual environment
+
+Initialization
+
+    python -m venv env
+
+Activation (on Windows run activate.exe)
+
+    source env/bin/activate.sh
 
 #### Installing required libraries
 
-`python -m pip install -r requirements.txt`
+    python -m pip install -r requirements.txt
 
-#### CLI Usage:
+## Usage:
 
-`python console.py --help`
+****For a quick start, please refer to our examples:****
 
+1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
 ```commandline
-Calculates propagation matrix with given method based on params in json input. Output is save as an image in given path [-h] [-m {conv,faith,sequential}] [--path PATH] json
-
-positional arguments:
-  json                  Json file to retrieve data
-
-optional arguments:
-  -h, --help      Shows this help message and exits
-  -m, --method    Method used to calculate output matrix
-  --path          Path to save output
-
+    python main.py
 ```
 
-#### Example:
+2. Exemplary usage of structure optimization through neural network optimization
+```commandline
+    python NN_training_example.py
+```
 
-To calculate simple propagation using convolution method and save the results in `outs/test.png` try:
+3. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
+```commandline
+    python GS_example.py
+```
 
-`python console.py params.json --method conv --path outs/test.png`
+#### Components:
+
+1. `light_prop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural network)
+2. `light_prop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
+3. `light_prop/algorithms.py` - set of methods used for calculating phase distribution and 
 
 
-### Running Unit tests
+## Contribution
+If you are interested in using/improving/developing this project, don't hesitate to contact us using email: 
+pawel.komorowski@wat.edu.pl
+
+## License
+
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](hhttps://github.com/bbrozyna/light-propagation/blob/master/LICENSE)
+
+This project is licensed under the terms of the [MIT license](/LICENSE).
+
+## Running Unit tests
+
 UT are written using pytest framework. To start tests use:
 
 `python -m pytest`

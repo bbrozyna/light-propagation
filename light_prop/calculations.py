@@ -23,12 +23,12 @@ def compare_np_arrays(array1, array2):
 def get_lens_distribution(params: PropagationParams):
     return np.array(
         [[lens(np.sqrt(x ** 2 + y ** 2), params.focal_length, params.wavelength) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
 
 
-def get_gaussian_distribution(params: PropagationParams, x0: float, y0: float):
+def get_gaussian_distribution(params: PropagationParams, x0: float = 0, y0: float = 0):
     return np.array(
-        [[gaussian(np.sqrt((x-x0) ** 2 + (y-y0) ** 2), params.sigma) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+        [[gaussian(np.sqrt((x-x0) ** 2 + (y-y0) ** 2), params.beam_diameter) for x in
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
