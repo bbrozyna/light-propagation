@@ -1,22 +1,22 @@
-import sys
 import argparse
 import logging
+import sys
 
-from light_prop.propagation.params import PropagationParams
 from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
+from light_prop.propagation.params import PropagationParams
 from light_prop.propagation_facade import PropagationFacade
 from light_prop.visualisation import GeneratePropagationPlot
 
 
 class PropagationArgParser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write('error: %s\n' % message)
+        sys.stderr.write("error: %s\n" % message)
         self.print_help()
         sys.exit(2)
 
 
 def configure_logger():
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
 
 def get_supported_propagations():
@@ -30,10 +30,18 @@ def get_supported_propagations():
 def get_parsed_input():
     propagation_choices = get_supported_propagations().keys()
     parser = PropagationArgParser(
-        'Calculates propagation matrix with given method based on params in json input. Output is save as an image in given path')
-    parser.add_argument('json', type=str, help='Json file to retrieve data')
-    parser.add_argument('-m', '--method', choices=propagation_choices, help='Method used to calculate output matrix', required=True)
-    parser.add_argument('--path', type=str, help='Path to save output')
+        "Calculates propagation matrix with given method based on params in json input. Output is save as an image in "
+        "given path "
+    )
+    parser.add_argument("json", type=str, help="Json file to retrieve data")
+    parser.add_argument(
+        "-m",
+        "--method",
+        choices=propagation_choices,
+        help="Method used to calculate output matrix",
+        required=True,
+    )
+    parser.add_argument("--path", type=str, help="Path to save output")
     return parser.parse_args()
 
 
@@ -52,12 +60,12 @@ def default_path(options):
 
     propagations = [
         options.method,
-        "_size"+str(prop_params.matrix_size),
-        "_pixel"+str(prop_params.pixel),
-        "_nu"+str(prop_params.nu),
-        "_sigma"+str(prop_params.sigma),
-        "_f"+str(prop_params.focal_length),
-    ]    
+        "_size" + str(prop_params.matrix_size),
+        "_pixel" + str(prop_params.pixel),
+        "_nu" + str(prop_params.nu),
+        "_sigma" + str(prop_params.sigma),
+        "_f" + str(prop_params.focal_length),
+    ]
     path = "outs/out_" + "".join(propagations) + ".png"
     return path
 

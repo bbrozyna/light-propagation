@@ -1,10 +1,10 @@
 import pytest
-from light_prop.propagation.params import PropagationParams, ParamsValidationException
+
+from light_prop.propagation.params import ParamsValidationException, PropagationParams
 
 
 class TestPropagationParams:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         return PropagationParams.get_example_propagation_data()
 
@@ -22,7 +22,9 @@ class TestPropagationParams:
             assert getattr(params, int_param) == proper_negative_value
             setattr(params, int_param, proper_float_value)
             assert getattr(params, int_param) == int(proper_float_value)
-            with pytest.raises(ParamsValidationException, match=f"cannot be converted to {int}"):
+            with pytest.raises(
+                ParamsValidationException, match=f"cannot be converted to {int}"
+            ):
                 setattr(params, int_param, xfail_value_not_convertable)
 
     def test_positive_int_params(self, params):
@@ -34,9 +36,13 @@ class TestPropagationParams:
         for int_param in positive_int_params:
             setattr(params, int_param, proper_value)
             assert getattr(params, int_param) == proper_value
-            with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
+            with pytest.raises(
+                ParamsValidationException, match=f"{int} greater than 0"
+            ):
                 setattr(params, int_param, xfail_negative_value)
-            with pytest.raises(ParamsValidationException, match=f"{int} greater than 0"):
+            with pytest.raises(
+                ParamsValidationException, match=f"{int} greater than 0"
+            ):
                 setattr(params, int_param, xfail_zero)
 
     def test_positive_float_params(self, params):
@@ -50,5 +56,7 @@ class TestPropagationParams:
             assert getattr(params, int_param) == proper_value
             setattr(params, int_param, proper_value2)
             assert getattr(params, int_param) == float(proper_value2)
-            with pytest.raises(ParamsValidationException, match=f"{float} greater than 0"):
+            with pytest.raises(
+                ParamsValidationException, match=f"{float} greater than 0"
+            ):
                 setattr(params, int_param, xfail_negative_value)

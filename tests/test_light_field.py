@@ -1,18 +1,17 @@
-import pytest
 import numpy as np
+import pytest
 
+from light_prop.calculations import compare_np_arrays
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
-from light_prop.calculations import compare_np_arrays
 
 
 class TestLightField:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         return PropagationParams.get_example_propagation_data()
 
-    @pytest.fixture
+    @pytest.fixture()
     def sample_amp_phase(self):
         amp = np.array([[1, 2], [3, 4]])
         phase = np.array([[0, np.pi / 2], [np.pi, 3 * np.pi / 2]])

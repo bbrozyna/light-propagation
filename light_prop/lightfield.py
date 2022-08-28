@@ -16,7 +16,7 @@ class LightField:
         return self.amplitude
 
     def to_intensity(self):
-        return self.amplitude ** 2
+        return self.amplitude**2
 
     def to_phase(self):
         return self.phase

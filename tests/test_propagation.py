@@ -1,25 +1,28 @@
-import pytest
 import numpy as np
+import pytest
 
-from light_prop.propagation.params import PropagationParams
-from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
+from light_prop.calculations import (
+    compare_np_arrays,
+    get_gaussian_distribution,
+    get_lens_distribution,
+)
 from light_prop.lightfield import LightField
-from light_prop.calculations import compare_np_arrays, get_lens_distribution, get_gaussian_distribution
+from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
+from light_prop.propagation.params import PropagationParams
 
 
 class TestPropagation:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         params = PropagationParams.get_example_propagation_data()
         params.matrix_size = 2
         return params
 
-    @pytest.fixture
+    @pytest.fixture()
     def amplitude(self, params):
         return get_gaussian_distribution(params)
 
-    @pytest.fixture
+    @pytest.fixture()
     def phase(self, params):
         return get_lens_distribution(params)
 

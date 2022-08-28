@@ -9,7 +9,9 @@ class ParamsValidationException(Exception):
 class PropagationParams:
     c = 299792458
 
-    def __init__(self, matrix_size, nu, wavelength, sigma, focal_length, distance, pixel):
+    def __init__(
+        self, matrix_size, nu, wavelength, sigma, focal_length, distance, pixel
+    ):
         logging.info("Loading propagation params")
         self.matrix_size = matrix_size
         self.nu = nu
@@ -89,18 +91,22 @@ class PropagationParams:
     def _positive_value_validator(self, value, expected_type):
         value = self._cast_to_type_validator(value, expected_type)
         if expected_type(value) <= 0:
-            raise ParamsValidationException(f"Value should be {expected_type} greater than 0")
+            raise ParamsValidationException(
+                f"Value should be {expected_type} greater than 0"
+            )
         return value
 
     def _cast_to_type_validator(self, value, expected_type):
         try:
             return expected_type(value)
         except ValueError:
-            raise ParamsValidationException(f"{value} cannot be converted to {expected_type}")
+            raise ParamsValidationException(
+                f"{value} cannot be converted to {expected_type}"
+            )
 
     @staticmethod
     def get_wavelength_from_nu(nu):
-        return PropagationParams.c / nu * 10 ** -6
+        return PropagationParams.c / nu * 10**-6
 
     @classmethod
     def get_example_propagation_data(cls):
@@ -111,7 +117,7 @@ class PropagationParams:
             "sigma": 20,
             "focal_length": 500,
             "distance": 500,
-            "pixel": 1
+            "pixel": 1,
         }
         return cls.get_params_from_dict(data)
 

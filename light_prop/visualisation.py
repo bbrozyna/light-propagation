@@ -21,19 +21,19 @@ class GeneratePropagationPlot:
             self.PLOT_PHASE: self.propagation_result.to_phase,
         }
         self.data = plot_type[output_type]()
-        plt.imshow(self.data, interpolation='nearest')
+        plt.imshow(self.data, interpolation="nearest")
 
     def save_output_as_figure(self, path):
-        
+
         self._prepare_path_to_save(path)
         logging.info(f"Saving to {path}")
         plt.savefig(path)
         logging.info("Generated")
-    
+
     def show(self):
         plt.show()
 
     def _prepare_path_to_save(self, path):
-        logging.info('Preparing directories')
+        logging.info("Preparing directories")
         dirs = os.path.dirname(path)
         Path(dirs).mkdir(parents=True, exist_ok=True)
