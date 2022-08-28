@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # Choose proper propagation parameters
     params.beam_diameter = 4
     params.matrix_size = 256
-    params.pixel = 0.9
+    params.pixel_size = 0.9
 
     # Define target optical field and input amplitude
     # In this example two focal points placed outside the main optical axis
@@ -28,17 +28,17 @@ if __name__ == "__main__":
     x_shift2 = 25
     target = np.array(
         [[gaussian(np.sqrt((x - x_shift1) ** 2 + y ** 2), params.beam_diameter) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel]) + np.array(
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]) + np.array(
         [[gaussian(np.sqrt((x - x_shift2) ** 2 + y ** 2), params.beam_diameter) for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
     params.beam_diameter = 50
     amp = get_gaussian_distribution(params)
     phase = np.array(
         [[0 for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
 
     # Prepare optimizer
     GS = GerchbergSaxton(params)

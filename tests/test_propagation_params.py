@@ -40,7 +40,7 @@ class TestPropagationParams:
                 setattr(params, int_param, xfail_zero)
 
     def test_positive_float_params(self, params):
-        positive_float_params = ["wavelength", "pixel", "nu", "beam_diameter"]
+        positive_float_params = ["wavelength", "pixel_size", "nu", "beam_diameter"]
         proper_value = 5
         proper_value2 = "5.3"
         xfail_negative_value = -1

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # Choose proper propagation parameters
     params.beam_diameter = 2
     params.matrix_size = 128
-    params.pixel = 0.5
+    params.pixel_size = 0.5
 
     # Define target optical field and input amplitude
     # In this example a simple focusing from wider Gaussian beam to the thinner one
@@ -23,14 +23,14 @@ if __name__ == "__main__":
     amp = get_gaussian_distribution(params, 0, 0)
     phase = np.array(
         [[0 for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel])
+          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
+         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
 
     # Build NNTrainer
     NN = NNTrainer(params)
 
     # Run NN optimization
-    # Please try running different numbers of epochs (last parameter)
+    # Please try running different numbers of iterations (last parameter)
     # Check the difference in the output for different amounts of training
     trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations=100)
 

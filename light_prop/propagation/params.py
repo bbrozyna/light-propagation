@@ -9,7 +9,7 @@ class ParamsValidationException(Exception):
 class PropagationParams:
     c = 299792458
 
-    def __init__(self, matrix_size, nu, wavelength, beam_diameter, focal_length, distance, pixel):
+    def __init__(self, matrix_size, nu, wavelength, beam_diameter, focal_length, distance, pixel_size):
         """
         Validates and converts propagation params.
         :param matrix_size: number of pixels on the side of square calculation matrix_size
@@ -18,7 +18,7 @@ class PropagationParams:
         :param beam_diameter: sigma parameter of Gaussian beam in [mm]
         :param focal_length: focusing distance in [mm]
         :param distance: propagation distance in [mm]
-        :param pixel: dimensions of the pixels used in calculations [mm]
+        :param pixel_size: dimensions of the pixels used in calculations [mm]
         """
         logging.info("Loading propagation params")
         self.matrix_size = matrix_size
@@ -29,7 +29,7 @@ class PropagationParams:
         self.beam_diameter = beam_diameter
         self.focal_length = focal_length
         self.distance = distance
-        self.pixel = pixel
+        self.pixel_size = pixel_size
 
     def __str__(self):
         return self.__dict__
@@ -83,11 +83,11 @@ class PropagationParams:
         self._distance = self._cast_to_type_validator(value, expected_type=int)
 
     @property
-    def pixel(self):
+    def pixel_size(self):
         return self._pixel
 
-    @pixel.setter
-    def pixel(self, value):
+    @pixel_size.setter
+    def pixel_size(self, value):
         self._pixel = self._positive_float_validator(value)
 
     def _positive_float_validator(self, value):
@@ -121,7 +121,7 @@ class PropagationParams:
             "beam_diameter": 20,
             "focal_length": 500,
             "distance": 500,
-            "pixel": 1
+            "pixel_size": 1
         }
         return cls.get_params_from_dict(data)
 
