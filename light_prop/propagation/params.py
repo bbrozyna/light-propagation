@@ -8,15 +8,18 @@ class ParamsValidationException(Exception):
 
 class PropagationParams:
     c = 299792458
-    # matrix_size - number of pixels on the side of square calculation matrix_size
-    # nu - frequency in [GHz]
-    # wavelength - wavelength of EM radiation in [mm]
-    # beam_diameter - sigma parameter of Gaussian beam in [mm]
-    # focal_length - focusing distance in [mm]
-    # distance - propagation distance in [mm]
-    # pixel - dimensions of the pixels used in calculations [mm]
 
     def __init__(self, matrix_size, nu, wavelength, beam_diameter, focal_length, distance, pixel):
+        """
+        Validates and converts propagation params.
+        :param matrix_size: number of pixels on the side of square calculation matrix_size
+        :param nu: frequency in [GHz]
+        :param wavelength: wavelength of EM radiation in [mm]
+        :param beam_diameter: sigma parameter of Gaussian beam in [mm]
+        :param focal_length: focusing distance in [mm]
+        :param distance: propagation distance in [mm]
+        :param pixel: dimensions of the pixels used in calculations [mm]
+        """
         logging.info("Loading propagation params")
         self.matrix_size = matrix_size
         self.nu = nu

@@ -40,15 +40,15 @@ class TestPropagationParams:
                 setattr(params, int_param, xfail_zero)
 
     def test_positive_float_params(self, params):
-        positive_float_params = ["wavelength", "pixel", "nu", "sigma"]
+        positive_float_params = ["wavelength", "pixel", "nu", "beam_diameter"]
         proper_value = 5
         proper_value2 = "5.3"
         xfail_negative_value = -1
 
-        for int_param in positive_float_params:
-            setattr(params, int_param, proper_value)
-            assert getattr(params, int_param) == proper_value
-            setattr(params, int_param, proper_value2)
-            assert getattr(params, int_param) == float(proper_value2)
+        for float_param in positive_float_params:
+            setattr(params, float_param, proper_value)
+            assert getattr(params, float_param) == proper_value
+            setattr(params, float_param, proper_value2)
+            assert getattr(params, float_param) == float(proper_value2)
             with pytest.raises(ParamsValidationException, match=f"{float} greater than 0"):
-                setattr(params, int_param, xfail_negative_value)
+                setattr(params, float_param, xfail_negative_value)
