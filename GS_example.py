@@ -12,7 +12,7 @@ from light_prop.calculations import gaussian
 from light_prop.calculations import get_gaussian_distribution
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
-from light_prop.visualisation import GeneratePropagationPlot
+from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
@@ -47,20 +47,20 @@ if __name__ == "__main__":
     input_plane, output_plane = GS.optimize(LightField(amp, phase), LightField(target, phase), iterations=3)
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(input_plane, output_type=GeneratePropagationPlot.PLOT_PHASE)
+    plotter = GeneratePropagationPlot(input_plane, output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/structure.png")
     plotter.show()
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(input_plane, output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(input_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/input_field.png")
 
     # Plot the result - output amplitude
-    plotter = GeneratePropagationPlot(output_plane, output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(output_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/result.png")
     plotter.show()
 
     # Plot the target amplitude
-    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/target.png")
     plotter.show()

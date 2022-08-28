@@ -4,7 +4,7 @@ from light_prop.algorithms import NNTrainer
 from light_prop.calculations import get_gaussian_distribution
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
-from light_prop.visualisation import GeneratePropagationPlot
+from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
@@ -42,15 +42,15 @@ if __name__ == "__main__":
 
     # Plot the result - optimized phase map
     plotter = GeneratePropagationPlot(LightField(amp, optimized_phase),
-                                      output_type=GeneratePropagationPlot.PLOT_PHASE)
+                                      output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
-    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNtarget.png")
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(LightField(amp, phase), output_type=GeneratePropagationPlot.PLOT_ABS)
+    plotter = GeneratePropagationPlot(LightField(amp, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNinput.png")
 
     # Plot the result - output amplitude
@@ -65,5 +65,5 @@ if __name__ == "__main__":
 
     # Plot the result
     plotter = GeneratePropagationPlot(LightField.from_complex_array(result),
-                                      output_type=GeneratePropagationPlot.PLOT_ABS)
+                                      output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNresult.png")
