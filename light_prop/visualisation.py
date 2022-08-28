@@ -7,18 +7,21 @@ from matplotlib import pyplot as plt
 from light_prop.lightfield import LightField
 
 
-class GeneratePropagationPlot:
-    PLOT_INTENSITY = "intensity"
-    PLOT_PHASE = "phase"
-    PLOT_ABS = "abs"
+class PlotTypes:
+    INTENSITY = "intensity"
+    PHASE = "phase"
+    ABS = "abs"
 
-    def __init__(self, propagation_result: LightField, output_type=PLOT_ABS):
+
+class GeneratePropagationPlot:
+
+    def __init__(self, propagation_result: LightField, output_type=PlotTypes.ABS):
         self.propagation_result = propagation_result
         logging.info("Plotting image data")
         plot_type = {
-            self.PLOT_ABS: self.propagation_result.to_abs,
-            self.PLOT_INTENSITY: self.propagation_result.to_intensity,
-            self.PLOT_PHASE: self.propagation_result.to_phase,
+            PlotTypes.ABS: self.propagation_result.to_abs,
+            PlotTypes.INTENSITY: self.propagation_result.to_intensity,
+            PlotTypes.PHASE: self.propagation_result.to_phase,
         }
         self.data = plot_type[output_type]()
         plt.imshow(self.data, interpolation="nearest")

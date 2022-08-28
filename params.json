@@ -5,5 +5,5 @@
   "sigma": 50,
   "focal_length": 500,
   "distance": 500,
-  "pixel": 1
+  "pixel_size": 1
 }

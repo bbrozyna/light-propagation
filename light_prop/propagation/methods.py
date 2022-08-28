@@ -55,10 +55,8 @@ class ConvolutionPropagation(BasePropagation):
                         self.params.distance,
                         self.params.wavelength,
                     )
-                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel
-                ]
-                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel
-            ]
+                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size]
+                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size]
         )
         return hkernel
 
@@ -95,10 +93,9 @@ class NNPropagation(ConvolutionPropagation):
                         np.pi * np.sqrt(x**2 + y**2) ** 2 / (self.params.distance * self.params.wavelength)
                         + 2 * np.pi * self.params.distance / self.params.wavelength
                     )
-                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel
+                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size
                 ]
-                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel
-            ]
+                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size]
         )
         kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size, 1, 1)
         return kernel

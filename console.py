@@ -61,7 +61,7 @@ def default_path(options):
     propagations = [
         options.method,
         "_size" + str(prop_params.matrix_size),
-        "_pixel" + str(prop_params.pixel),
+        "_pixel" + str(prop_params.pixel_size),
         "_nu" + str(prop_params.nu),
         "_sigma" + str(prop_params.sigma),
         "_f" + str(prop_params.focal_length),
