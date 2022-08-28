@@ -14,7 +14,6 @@ class PlotTypes:
 
 
 class GeneratePropagationPlot:
-
     def __init__(self, propagation_result: LightField, output_type=PlotTypes.ABS):
         self.propagation_result = propagation_result
         logging.info("Plotting image data")

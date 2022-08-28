@@ -23,7 +23,8 @@ if __name__ == "__main__":
     phase = np.array(
         [
             [0 for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
-            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
     )
 
     # Build NNTrainer
@@ -41,8 +42,7 @@ if __name__ == "__main__":
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase),
-                                      output_type=PlotTypes.PHASE)
+    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
@@ -72,6 +72,5 @@ if __name__ == "__main__":
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
     # Plot the result
-    plotter = GeneratePropagationPlot(LightField.from_complex_array(result),
-                                      output_type=PlotTypes.ABS)
+    plotter = GeneratePropagationPlot(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNresult.png")

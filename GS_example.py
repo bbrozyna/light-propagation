@@ -29,21 +29,26 @@ if __name__ == "__main__":
         [
             [
                 gaussian(np.sqrt((x - x_shift1) ** 2 + y**2), params.beam_diameter)
-                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
-            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
+                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+            ]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
     ) + np.array(
         [
             [
                 gaussian(np.sqrt((x - x_shift2) ** 2 + y**2), params.beam_diameter)
-                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
-            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
+                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+            ]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
     )
     params.beam_diameter = 50
     amp = get_gaussian_distribution(params)
     phase = np.array(
         [
             [0 for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
-            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
     )
 
     # Prepare optimizer
@@ -60,7 +65,7 @@ if __name__ == "__main__":
     # Plot the input amplitude
     plotter = GeneratePropagationPlot(input_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/input_field.png")
-# Plot the result - output amplitude
+    # Plot the result - output amplitude
     plotter = GeneratePropagationPlot(output_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/result.png")
     plotter.show()
