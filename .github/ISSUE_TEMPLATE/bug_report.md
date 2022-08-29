@@ -12,10 +12,10 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See an error
+1. Run algorithm: '...'
+2. Use propagation method: '....'
+3. Check output phase '....'
+4. Phase plot is empty
 
 **Current state**
 What is the current result of the above steps
