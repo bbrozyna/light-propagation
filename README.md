@@ -27,7 +27,7 @@ Activation (on Windows run activate.exe)
 
 1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
 ```commandline
-    python main.py
+    python propagation_example.py
 ```
 
 2. Exemplary usage of structure optimization through neural network optimization
