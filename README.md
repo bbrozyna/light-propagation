@@ -42,9 +42,9 @@ Activation (on Windows run activate.exe)
 
 #### Components:
 
-1. `light_prop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural network)
-2. `light_prop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
-3. `light_prop/algorithms.py` - set of methods used for calculating phase distribution and 
+1. `lightprop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural network)
+2. `lightprop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
+3. `lightprop/algorithms.py` - set of methods used for calculating phase distribution and 
 
 
 ## Contribution

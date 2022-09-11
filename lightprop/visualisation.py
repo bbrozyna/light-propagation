@@ -4,7 +4,7 @@ from pathlib import Path
 
 from matplotlib import pyplot as plt
 
-from light_prop.lightfield import LightField
+from lightprop.lightfield import LightField
 
 
 class PlotTypes:

@@ -1,9 +1,9 @@
 import pytest
 import numpy as np
 
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
-from light_prop.calculations import compare_np_arrays
+from lightprop.lightfield import LightField
+from lightprop.propagation.params import PropagationParams
+from lightprop.calculations import compare_np_arrays
 
 
 class TestLightField:

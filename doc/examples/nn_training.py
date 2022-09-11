@@ -1,10 +1,10 @@
 import numpy as np
 
-from light_prop.algorithms import NNTrainer
-from light_prop.calculations import get_gaussian_distribution
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
-from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
+from lightprop.algorithms import NNTrainer
+from lightprop.calculations import get_gaussian_distribution
+from lightprop.lightfield import LightField
+from lightprop.propagation.params import PropagationParams
+from lightprop.visualisation import GeneratePropagationPlot, PlotTypes
 
 if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()

@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from light_prop.propagation_facade import PropagationFacade
-from light_prop.propagation.params import PropagationParams
-from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
-from light_prop.visualisation import GeneratePropagationPlot
+from lightprop.propagation_facade import PropagationFacade
+from lightprop.propagation.params import PropagationParams
+from lightprop.propagation.methods import ConvolutionPropagation, NNPropagation
+from lightprop.visualisation import GeneratePropagationPlot
 
 
 if __name__ == "__main__":

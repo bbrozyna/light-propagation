@@ -1,5 +1,5 @@
 import pytest
-from light_prop.propagation.params import PropagationParams, ParamsValidationException
+from lightprop.propagation.params import PropagationParams, ParamsValidationException
 
 
 class TestPropagationParams:

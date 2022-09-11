@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 
-import light_prop.propagation.methods as prop
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
+import lightprop.propagation.methods as prop
+from lightprop.lightfield import LightField
+from lightprop.propagation.params import PropagationParams
 
 
 class GerchbergSaxton:

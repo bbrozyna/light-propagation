@@ -13,10 +13,10 @@ from keras.layers import Convolution2D
 from scipy import signal
 from tensorflow import keras
 
-from light_prop.calculations import h
-from light_prop.lightfield import LightField
-from light_prop.propagation.keras_layers import Aexp, ReIm_convert, Structure
-from light_prop.propagation.params import PropagationParams
+from lightprop.calculations import h
+from lightprop.lightfield import LightField
+from lightprop.propagation.keras_layers import Aexp, ReIm_convert, Structure
+from lightprop.propagation.params import PropagationParams
 
 
 class BasePropagation:

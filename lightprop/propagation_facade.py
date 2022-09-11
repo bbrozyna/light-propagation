@@ -1,8 +1,8 @@
 from collections import namedtuple
 
-from light_prop.propagation.params import PropagationParams
-from light_prop.lightfield import LightField
-from light_prop.calculations import get_gaussian_distribution, get_lens_distribution
+from lightprop.propagation.params import PropagationParams
+from lightprop.lightfield import LightField
+from lightprop.calculations import get_gaussian_distribution, get_lens_distribution
 
 
 class PropagationFacade:
