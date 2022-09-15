@@ -21,34 +21,66 @@ Activation (on Windows run activate.exe)
 
     python -m pip install -r requirements.txt
 
+## Linting
+
+To support linting and unify styling we suggest to use [pre-commit](https://pre-commit.com)
+
+#### pre-commit installation
+
+    pip install pre-commit
+
+#### pre-commit usage
+
+**Running pre-commit automatically**
+
+To run validation automatically before each commit, please use:
+
+    pre-commit install
+
+This will add pre-commit to git hooks and perform all the checks defined in `.pre-commit-config.yaml`
+
+**Running pre-commit manually**
+
+To check stying in all files, please use
+
+    pre-commit run -a
+
+#### pre-commit in CI
+
+Every pull request should pass pre-commit stage to be merged
+
 ## Usage:
 
 ****For a quick start, please refer to our examples:****
 
 1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
+
 ```commandline
     python propagation_example.py
 ```
 
 2. Exemplary usage of structure optimization through neural network optimization
+
 ```commandline
     python NN_training_example.py
 ```
 
 3. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
+
 ```commandline
     python GS_example.py
 ```
 
 #### Components:
 
-1. `light_prop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural network)
+1. `light_prop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural
+   network)
 2. `light_prop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
-3. `light_prop/algorithms.py` - set of methods used for calculating phase distribution and 
-
+3. `light_prop/algorithms.py` - set of methods used for calculating phase distribution and
 
 ## Contribution
-If you are interested in using/improving/developing this project, don't hesitate to contact us using email: 
+
+If you are interested in using/improving/developing this project, don't hesitate to contact us using email:
 pawel.komorowski@wat.edu.pl
 
 ## License

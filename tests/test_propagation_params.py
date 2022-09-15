@@ -1,10 +1,10 @@
 import pytest
-from light_prop.propagation.params import PropagationParams, ParamsValidationException
+
+from light_prop.propagation.params import ParamsValidationException, PropagationParams
 
 
 class TestPropagationParams:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         return PropagationParams.get_example_propagation_data()
 
