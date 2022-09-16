@@ -41,3 +41,10 @@ class Structure(keras.layers.Layer):
 
     def call(self, inputs):
         return K.concatenate([inputs[:, 0], inputs[:, 1] + self.kernel], axis=1)
+
+class Convolve(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, field, kernel):
+        return K.conv2d(field, kernel, padding="same", data_format="channels_first")

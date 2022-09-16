@@ -2,15 +2,19 @@ import numpy as np
 
 
 class LightField:
-    def __init__(self, amp: np.array, phase: np.array):
+    def __init__(self, amp: np.array, phase: np.array, freq: float):
         if not (isinstance(amp, np.ndarray) and isinstance(phase, np.ndarray)):
             raise Exception("Arguments must be np.array type")
 
         if amp.size != phase.size:
             raise Exception("Dimensions do not match")
+        
+        if freq <= 0:
+            raise Exception("Frequency must be positive")
 
         self.amplitude = amp
         self.phase = phase
+        self.frequency = freq
 
     def to_abs(self):
         return self.amplitude
@@ -49,7 +53,8 @@ class LightField:
         return LightField(amplitude, phase)
 
     @classmethod
-    def from_complex_array(cls, complex_array):
+    def from_complex_array(cls, complex_array, f):
         amp = np.abs(complex_array)
         phase = np.angle(complex_array)
-        return cls(amp, phase)
+        freq = f
+        return cls(amp, phase, freq)

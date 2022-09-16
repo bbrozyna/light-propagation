@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # Run NN optimization
     # Please try running different numbers of iterations (last parameter)
     # Check the difference in the output for different amounts of training
-    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations=100)
+    trained_model = NN.optimize(LightField(amp, phase, params.nu), LightField(target, phase, params.nu), iterations=100)
 
     # Plot loss vs epochs
     NN.plot_loss()
@@ -42,21 +42,21 @@ if __name__ == "__main__":
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
+    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase, params.nu), output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
-    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=PlotTypes.ABS)
+    plotter = GeneratePropagationPlot(LightField(target, phase, params.nu), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNtarget.png")
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(LightField(amp, phase), output_type=PlotTypes.ABS)
+    plotter = GeneratePropagationPlot(LightField(amp, phase, params.nu), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNinput.png")
 
     # Plot the result - output amplitude
 
     # Prepare input field
-    field = np.array([amp, phase])
+    field = np.array(amp, phase)
     field = field.reshape(
         (
             1,
