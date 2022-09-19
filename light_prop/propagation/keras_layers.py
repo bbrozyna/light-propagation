@@ -1,6 +1,7 @@
 import tensorflow as tf
 from keras import backend as K
 from tensorflow import keras
+import math as m
 
 
 class Aexp(keras.layers.Layer):
@@ -47,4 +48,9 @@ class Convolve(keras.layers.Layer):
         super().__init__(**kwargs)
 
     def call(self, field, kernel):
-        return K.conv2d(field, kernel, padding="same", data_format="channels_first")
+        conv = K.conv2d(field, kernel, padding="same", strides = (1,1), data_format="channels_first")
+
+        print(field)
+        print(kernel)
+        print(conv)
+        return conv
