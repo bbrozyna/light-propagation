@@ -1,7 +1,6 @@
 import tensorflow as tf
 from keras import backend as K
 from tensorflow import keras
-import math as m
 
 
 class Aexp(keras.layers.Layer):
@@ -43,14 +42,22 @@ class Structure(keras.layers.Layer):
     def call(self, inputs):
         return K.concatenate([inputs[:, 0], inputs[:, 1] + self.kernel], axis=1)
 
+
 class Convolve(keras.layers.Layer):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def call(self, field, kernel):
-        conv = K.conv2d(field, kernel, padding="same", strides = (1,1), data_format="channels_first")
-
-        print(field)
-        print(kernel)
-        print(conv)
+    def call(self, data):
+        field = data[0]
+        kernel = data[1]
+        kernel = K.expand_dims(kernel, axis=-1)
+        conv = K.conv2d(field, kernel, padding="same", strides=1, data_format="channels_last")
         return conv
+
+
+class Slice(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, kernel):
+        return kernel[0, :, :, :]

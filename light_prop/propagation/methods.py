@@ -14,7 +14,13 @@ from tensorflow import keras
 
 from light_prop.calculations import h
 from light_prop.lightfield import LightField
-from light_prop.propagation.keras_layers import Aexp, Convolve, ReIm_convert, Structure
+from light_prop.propagation.keras_layers import (
+    Aexp,
+    Convolve,
+    ReIm_convert,
+    Slice,
+    Structure,
+)
 from light_prop.propagation.params import PropagationParams
 
 
@@ -178,6 +184,7 @@ class NNPropagation(ConvolutionPropagation):
     def reshape_output(self, data):
         return data[0, 0, :, :] * np.exp(1j * data[0, 1, :, :])
 
+
 class MultiparameterNNPropagation(ConvolutionPropagation):
     def __init__(self, propagation_params):
         super().__init__(propagation_params)
@@ -205,7 +212,7 @@ class MultiparameterNNPropagation(ConvolutionPropagation):
 
     def get_field_modifier(self):
         inputField = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
-        Kernel = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
+        Kernel = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size), batch_size=1)
 
         x = Aexp()(inputField)
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
@@ -217,25 +224,25 @@ class MultiparameterNNPropagation(ConvolutionPropagation):
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
 
         Re = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(x)
-        Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size,1))(Re)
+        Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
         Im = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(x)
         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
 
         KernelRe = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(Kernel)
         KernelRe = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(KernelRe)
+        KernelRe = Slice()(KernelRe)
         KernelIm = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(Kernel)
         KernelIm = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(KernelIm)
+        KernelIm = Slice()(KernelIm)
 
-        kerRe = K.variable(KernelRe)
-
-        ReRe = Convolve()(Re, kerRe)
-        ImRe = Convolve()(Re, KernelIm)
-        ReIm = Convolve()(Im, KernelRe)
-        ImIm = Convolve()(Im, KernelIm)
+        ReRe = Convolve()([Re, KernelRe])
+        ImRe = Convolve()([Re, KernelIm])
+        ReIm = Convolve()([Im, KernelRe])
+        ImIm = Convolve()([Im, KernelIm])
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
-        x = keras.layers.Concatenate(axis=0)([Re, Im])
+        x = keras.layers.Concatenate(axis=1)([Re, Im])
         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
         x = Aexp()(x)
         outputs = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
