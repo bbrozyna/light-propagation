@@ -4,10 +4,10 @@ import numpy as np
 class LightField:
     def __init__(self, amp: np.array, phase: np.array):
         if not (isinstance(amp, np.ndarray) and isinstance(phase, np.ndarray)):
-            raise Exception("Arguments must be np.array type")
+            raise TypeError("Arguments must be np.array type")
 
         if amp.size != phase.size:
-            raise Exception("Dimensions do not match")
+            raise ValueError("Dimensions do not match")
 
         self.amplitude = amp
         self.phase = phase
@@ -16,7 +16,7 @@ class LightField:
         return self.amplitude
 
     def to_intensity(self):
-        return self.amplitude ** 2
+        return self.amplitude**2
 
     def to_phase(self):
         return self.phase
