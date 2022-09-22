@@ -1,7 +1,9 @@
 import numpy as np
 
-from light_prop.algorithms import NNTrainer
-from light_prop.calculations import get_gaussian_distribution
+from light_prop.algorithms import NNMultiTrainer
+
+# from light_prop.algorithms import NNTrainer
+from light_prop.calculations import get_gaussian_distribution, h
 from light_prop.lightfield import LightField
 from light_prop.propagation.params import PropagationParams
 from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
@@ -27,13 +29,31 @@ if __name__ == "__main__":
         ]
     )
 
-    # Build NNTrainer
-    NN = NNTrainer(params)
+    # Build NNTrainer or NNMultiTrainer
+    # NN = NNTrainer(params)
+    NN = NNMultiTrainer(params)
 
     # Run NN optimization
+    # In case of NNMultiTrainer provide kernel as 3rd argument.
     # Please try running different numbers of iterations (last parameter)
     # Check the difference in the output for different amounts of training
-    trained_model = NN.optimize(LightField(amp, phase, params.nu), LightField(target, phase, params.nu), iterations=100)
+
+    kernel = np.array(
+        [
+            [
+                h(np.sqrt(x**2 + y**2), params.distance, params.wavelength)
+                for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+            ]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
+    )
+
+    trained_model = NN.optimize(
+        LightField(amp, phase, params.nu),
+        LightField(target, phase, params.nu),
+        LightField.from_complex_array(kernel, params.nu),
+        iterations=2000,
+    )
 
     # Plot loss vs epochs
     NN.plot_loss()
@@ -55,9 +75,19 @@ if __name__ == "__main__":
 
     # Plot the result - output amplitude
 
-    # Prepare input field
-    field = np.array(amp, phase)
+    # Prepare input field and kernel
+    field = np.array([amp, phase])
     field = field.reshape(
+        (
+            1,
+            2,
+            params.matrix_size,
+            params.matrix_size,
+        ),
+        order="F",
+    )
+    kernel = np.array([np.real(kernel), np.imag(kernel)])
+    kernel = kernel.reshape(
         (
             1,
             2,
@@ -68,9 +98,9 @@ if __name__ == "__main__":
     )
 
     # Evaluate model on the input field
-    result = trained_model(field).numpy()
+    result = trained_model([field, kernel]).numpy()
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
     # Plot the result
-    plotter = GeneratePropagationPlot(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
+    plotter = GeneratePropagationPlot(LightField.from_complex_array(result, params.nu), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNresult.png")
