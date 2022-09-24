@@ -6,15 +6,17 @@ from matplotlib import pyplot as plt
 
 from lightprop.lightfield import LightField
 
-
+# TODO enum?
 class PlotTypes:
     INTENSITY = "intensity"
     PHASE = "phase"
     ABS = "abs"
 
 
-class GeneratePropagationPlot:
+class Plotter:
 
+    # TODO should be rather a wrapper fo whatever plotting lib we will be using, maybe its not even necessary?
+    # TODO separate configuration (ctor/cofinguring method(s)) from action (self.show)
     def __init__(self, propagation_result: LightField, output_type=PlotTypes.ABS):
         self.propagation_result = propagation_result
         logging.info("Plotting image data")
@@ -24,6 +26,8 @@ class GeneratePropagationPlot:
             PlotTypes.PHASE: self.propagation_result.to_phase,
         }
         self.data = plot_type[output_type]()
+
+        # TODO imo this should not plot anything in constructor
         plt.imshow(self.data, interpolation='nearest')
 
     def save_output_as_figure(self, path):
