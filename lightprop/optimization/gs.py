@@ -1,0 +1,2 @@
+class GS:
+    pass

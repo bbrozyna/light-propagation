@@ -1,0 +1,2 @@
+class NN:
+    pass
