@@ -1,10 +1,10 @@
 import pytest
-from lightprop.propagation.params import PropagationParams, ParamsValidationException
+
+from lightprop.propagation.params import ParamsValidationException, PropagationParams
 
 
 class TestPropagationParams:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         return PropagationParams.get_example_propagation_data()
 
@@ -13,7 +13,7 @@ class TestPropagationParams:
         proper_value = 5
         proper_negative_value = -1
         proper_float_value = 0.1
-        xfail_value_not_convertable = " - 1 2 test 3"
+        xfail_value_not_convertible = " - 1 2 test 3"
 
         for int_param in int_params:
             setattr(params, int_param, proper_value)
@@ -23,7 +23,7 @@ class TestPropagationParams:
             setattr(params, int_param, proper_float_value)
             assert getattr(params, int_param) == int(proper_float_value)
             with pytest.raises(ParamsValidationException, match=f"cannot be converted to {int}"):
-                setattr(params, int_param, xfail_value_not_convertable)
+                setattr(params, int_param, xfail_value_not_convertible)
 
     def test_positive_int_params(self, params):
         positive_int_params = ["matrix_size"]

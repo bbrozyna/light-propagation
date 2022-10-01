@@ -51,12 +51,12 @@ class ConvolutionPropagation(BasePropagation):
             [
                 [
                     h(
-                        np.sqrt(x ** 2 + y ** 2),
+                        np.sqrt(x**2 + y**2),
                         self.params.distance,
                         self.params.wavelength,
                     )
                     for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2)
-                             * self.params.pixel_size
+                    * self.params.pixel_size
                 ]
                 for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size
             ]
@@ -93,7 +93,7 @@ class NNPropagation(ConvolutionPropagation):
                     1
                     / (self.params.distance * self.params.wavelength)
                     * func(
-                        np.pi * np.sqrt(x ** 2 + y ** 2) ** 2 / (self.params.distance * self.params.wavelength)
+                        np.pi * np.sqrt(x**2 + y**2) ** 2 / (self.params.distance * self.params.wavelength)
                         + 2 * np.pi * self.params.distance / self.params.wavelength
                     )
                     for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2)

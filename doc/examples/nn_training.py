@@ -22,9 +22,11 @@ if __name__ == "__main__":
     params.beam_diameter = 15
     amp = get_gaussian_distribution(params, 0, 0)
     phase = np.array(
-        [[0 for x in
-          np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size] for y in
-         np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size])
+        [
+            [0 for x in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size]
+            for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
+        ]
+    )
 
     # Build NNTrainer
     NN = NNTrainer(params)
@@ -41,8 +43,7 @@ if __name__ == "__main__":
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
     # Plot the result - optimized phase map
-    plotter = Plotter(LightField(amp, optimized_phase),
-                                      output_type=PlotTypes.PHASE)
+    plotter = Plotter(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
@@ -57,13 +58,20 @@ if __name__ == "__main__":
 
     # Prepare input field
     field = np.array([amp, phase])
-    field = field.reshape((1, 2, params.matrix_size, params.matrix_size,), order='F')
+    field = field.reshape(
+        (
+            1,
+            2,
+            params.matrix_size,
+            params.matrix_size,
+        ),
+        order="F",
+    )
 
     # Evaluate model on the input field
     result = trained_model(field).numpy()
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
     # Plot the result
-    plotter = Plotter(LightField.from_complex_array(result),
-                                      output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNresult.png")

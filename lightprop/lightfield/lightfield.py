@@ -9,13 +9,13 @@ class LightField:
         self.amplitude = amp
         self.phase = phase
 
-    def abs(self):
+    def get_abs(self):
         return self.amplitude
 
     def to_intensity(self):
-        return self.amplitude ** 2
+        return self.amplitude**2
 
-    def phase(self):
+    def get_phase(self):
         return self.phase
 
     def to_re(self):

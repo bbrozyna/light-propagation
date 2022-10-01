@@ -1,5 +1,4 @@
 class TestLoadingLFFiles:
-
     def test_loading_existing_file_as_str_succeeds(self):
         pass
 
@@ -30,7 +29,6 @@ class TestLoadingLFFiles:
 
 
 class TestLoadingPNGFiles:
-
     def test_loading_existing_file_as_str_succeeds(self):
         pass
 
@@ -61,7 +59,6 @@ class TestLoadingPNGFiles:
 
 
 class TestLoadingBMPFiles:
-
     def test_loading_existing_file_as_str_succeeds(self):
         pass
 

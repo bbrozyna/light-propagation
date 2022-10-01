@@ -110,7 +110,7 @@ class PropagationParams:
 
     @staticmethod
     def get_wavelength_from_nu(nu):
-        return PropagationParams.c / nu * 10 ** -6
+        return PropagationParams.c / nu * 10**-6
 
     @classmethod
     def get_example_propagation_data(cls):

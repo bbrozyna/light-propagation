@@ -15,9 +15,6 @@ class PlotTypes:
 
 
 class Plotter:
-
-    # TODO should be rather a wrapper fo whatever plotting lib we will be using, maybe its not even necessary?
-    # TODO separate configuration (ctor/cofinguring method(s)) from action (self.show)
     def __init__(self, propagation_result: LightField, output_type=PlotTypes.ABS):
         self.propagation_result = propagation_result
         logging.info("Plotting image data")
@@ -28,8 +25,7 @@ class Plotter:
         }
         self.data = plot_type[output_type]()
 
-        # TODO imo this should not plot anything in constructor
-        plt.imshow(self.data, interpolation='nearest')
+        plt.imshow(self.data, interpolation="nearest")
 
     def save_output_as_figure(self, path):
         self._prepare_path_to_save(path)
@@ -41,6 +37,6 @@ class Plotter:
         plt.show()
 
     def _prepare_path_to_save(self, path):
-        logging.info('Preparing directories')
+        logging.info("Preparing directories")
         dirs = os.path.dirname(path)
         Path(dirs).mkdir(parents=True, exist_ok=True)

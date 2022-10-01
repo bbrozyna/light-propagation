@@ -54,19 +54,17 @@ Every pull request should pass pre-commit stage to be merged
 ****For a quick start, please refer to our examples:****
 
 1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
-```commandline
-    python propagation_example.py
-```
-
+    ```commandline
+        python propagation_example.py
+    ```
 2. Exemplary usage of structure optimization through neural network optimization
-```commandline
-    python NN_training_example.py
-```
-
+    ```commandline
+        python NN_training_example.py
+    ```
 3. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
-```commandline
-    python GS_example.py
-```
+    ```commandline
+        python GS_example.py
+    ```
 
 #### Components:
 

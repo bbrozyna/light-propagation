@@ -1,25 +1,28 @@
-import pytest
 import numpy as np
+import pytest
 
-from lightprop.propagation.params import PropagationParams
-from lightprop.propagation.methods import ConvolutionPropagation, NNPropagation
+from lightprop.calculations import (
+    compare_np_arrays,
+    get_gaussian_distribution,
+    get_lens_distribution,
+)
 from lightprop.lightfield import LightField
-from lightprop.calculations import compare_np_arrays, get_lens_distribution, get_gaussian_distribution
+from lightprop.propagation.methods import ConvolutionPropagation, NNPropagation
+from lightprop.propagation.params import PropagationParams
 
 
 class TestPropagation:
-
-    @pytest.fixture
+    @pytest.fixture()
     def params(self):
         params = PropagationParams.get_example_propagation_data()
         params.matrix_size = 2
         return params
 
-    @pytest.fixture
+    @pytest.fixture()
     def amplitude(self, params):
         return get_gaussian_distribution(params)
 
-    @pytest.fixture
+    @pytest.fixture()
     def phase(self, params):
         return get_lens_distribution(params)
 
@@ -33,7 +36,6 @@ class TestPropagation:
         assert compare_np_arrays(expected_result, output_field.to_abs())
 
     def test_NN_propagation(self, params, amplitude, phase):
-        # todo add test to check if matrixes are swapping quarters or reversing
         expected_result = np.array([[0.00373122, 0.00186445], [0.00186445, 0.00093165]])
 
         field = LightField(amplitude, phase)
