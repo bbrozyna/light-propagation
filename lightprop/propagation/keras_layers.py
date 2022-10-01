@@ -31,10 +31,12 @@ class Structure(keras.layers.Layer):
 
     def build(self, input_shape):
         # Create a trainable weight variable for this layer.
-        self.kernel = self.add_weight(name='kernel',
-                                      shape=(input_shape[2], input_shape[3]),
-                                      initializer=self.kernel_initializer,  # TODO: Choose your initializer
-                                      trainable=True)
+        self.kernel = self.add_weight(
+            name="kernel",
+            shape=(input_shape[2], input_shape[3]),
+            initializer=self.kernel_initializer,  # TODO: Choose your initializer
+            trainable=True,
+        )
         super().build(input_shape)
 
     def call(self, inputs):

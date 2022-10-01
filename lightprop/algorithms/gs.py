@@ -1,6 +1,7 @@
 from lightprop import ProagationParams
 from lightprop.lightfield import LightField
 
+
 class GerchbergSaxton:
     def __init__(self, propagation_params: PropagationParams):
         self.params = propagation_params

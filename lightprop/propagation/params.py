@@ -121,7 +121,7 @@ class PropagationParams:
             "beam_diameter": 20,
             "focal_length": 500,
             "distance": 500,
-            "pixel_size": 1
+            "pixel_size": 1,
         }
         return cls.get_params_from_dict(data)
 

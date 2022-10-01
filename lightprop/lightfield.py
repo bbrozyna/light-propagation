@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # TODO consider implement slicing (__getitem__)
 class LightField:
     def __init__(self, amp: np.array, phase: np.array):
@@ -14,7 +15,7 @@ class LightField:
         return self.amplitude
 
     def to_intensity(self):
-        return self.amplitude**2
+        return self.amplitude ** 2
 
     # TODO 'to' suggests rather your own copy of data but its not, maybe just `phase`?
     def to_phase(self):
