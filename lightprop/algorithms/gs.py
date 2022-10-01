@@ -1,4 +1,3 @@
-from lightprop import ProagationParams
 from lightprop.lightfield import LightField
 
 

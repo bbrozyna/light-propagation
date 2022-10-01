@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 
 from lightprop.lightfield import LightField
 
+
 # TODO enum?
 class PlotTypes:
     INTENSITY = "intensity"

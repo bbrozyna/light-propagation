@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
+
 import lightprop.propagation.methods as prop
 from lightprop.lightfield import LightField
 from lightprop.propagation.params import PropagationParams
+
 
 class NNTrainer:
     def __init__(self, propagation_params: PropagationParams):
