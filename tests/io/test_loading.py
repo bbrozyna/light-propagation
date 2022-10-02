@@ -1,88 +1,51 @@
-class TestLoadingLFFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
+from itertools import combinations
 
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
+import pytest
 
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
-
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
-
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
-
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+import lightprop as lp
 
 
-class TestLoadingPNGFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
-
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
-
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
-
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
-
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
-
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+def test_loading_existing_lf_file_succeeds():
+    assert lp.load("sample.lf")
 
 
-class TestLoadingBMPFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
+@pytest.mark.parametrize("field_type", ["re", "im", "amplitude", "phase"])
+def test_loading_not_existing_file_raises_file_not_found_error(field_type):
+    file_name = "not-existing.png"
+    with pytest.raises(FileNotFoundError, match=f"File: {file_name} not found!"):
+        lp.load(**{field_type: file_name})
 
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
 
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
+@pytest.mark.parametrize("field_type", ["re", "im", "amplitude", "phase"])
+def test_loading_existing_image_as_single_field_type_succeeds(field_type):
+    assert lp.load(**{field_type: "sample.png"})
+    assert lp.load(**{field_type: "sample.bmp"})
 
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
 
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
+@pytest.mark.parametrize("f1,f2", [("re", "im"), ("amplitude", "phase")])
+def test_loading_supplemental_field_types_succeeds(f1, f2):
+    assert lp.load(**{f1: "sample.png", f2: "sample.png"})
 
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
 
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
+@pytest.mark.parametrize(
+    "f1,f2",
+    [
+        ("re", "amplitude"),
+        ("amplitude", "re"),
+        ("im", "amplitude"),
+        ("amplitude", "im"),
+        ("re", "phase"),
+        ("phase", "re"),
+        ("im", "phase"),
+        ("phase", "im"),
+    ],
+)
+def test_loading_not_supplemental_field_types_raises_value_error(f1, f2):
+    with pytest.raises(ValueError, match=f"Cannot load fields [{f1},{f2}] simultaneously!"):
+        assert lp.load(**{f1: "sample.png", f2: "sample.png"})
 
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+
+def test_loading_more_than_two_field_types_raises_value_error():
+    for fields in combinations(["re", "im", "phase", "amplitude"], 3):
+        with pytest.raises(ValueError, match=f"Cannot load fields: {fields} simultaneously!"):
+            lp.load(**{key: "sample.png" for key in fields})
