@@ -21,7 +21,6 @@ class TestLightField:
         amp_correct = np.array([[1, 2], [3, 4]])
         phase_correct = np.array([[0, np.pi / 2], [np.pi, 3 * np.pi / 2]])
         phase_incorrect = np.array(1)
-        bad_value1 = 5
         lf = LightField(amp_correct, phase_correct)
 
         assert compare_np_arrays(lf.amplitude, amp_correct)
@@ -30,9 +29,6 @@ class TestLightField:
         with pytest.raises(Exception, match="Dimensions do not match"):
             LightField(amp_correct, phase_incorrect)
 
-        with pytest.raises(Exception, match="Arguments must be np.array type"):
-            LightField(amp_correct, bad_value1)
-
     def test_light_field_conversion(self, sample_amp_phase):
         correct_abs = np.array([[1, 2], [3, 4]])
         correct_phase = np.array([[0, np.pi / 2], [np.pi, 3 * np.pi / 2]])
@@ -40,8 +36,8 @@ class TestLightField:
         correct_re = np.array([[1, 0], [-3, 0]])
         correct_im = np.array([[0, 2], [0, -4]])
         lf = sample_amp_phase
-        assert compare_np_arrays(lf.to_abs(), correct_abs)
-        assert compare_np_arrays(lf.to_phase(), correct_phase)
+        assert compare_np_arrays(lf.get_abs(), correct_abs)
+        assert compare_np_arrays(lf.get_phase(), correct_phase)
         assert compare_np_arrays(lf.to_intensity(), correct_intensity)
         assert compare_np_arrays(lf.to_re(), correct_re)
         assert compare_np_arrays(lf.to_im(), correct_im)

@@ -7,7 +7,7 @@ Created on Thu Aug  4 15:44:04 2022
 
 import numpy as np
 
-from lightprop.algorithms import GerchbergSaxton
+from lightprop.algorithms.gs import GerchbergSaxton
 from lightprop.calculations import gaussian, get_gaussian_distribution
 from lightprop.lightfield import LightField
 from lightprop.propagation.params import PropagationParams

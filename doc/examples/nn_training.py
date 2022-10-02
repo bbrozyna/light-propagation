@@ -1,6 +1,6 @@
 import numpy as np
 
-from lightprop.algorithms import NNTrainer
+from lightprop.algorithms.nn_trainer import NNTrainer
 from lightprop.calculations import get_gaussian_distribution
 from lightprop.lightfield import LightField
 from lightprop.propagation.params import PropagationParams

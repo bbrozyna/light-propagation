@@ -4,7 +4,7 @@ import numpy as np
 class LightField:
     def __init__(self, amp: np.array, phase: np.array):
         if amp.size != phase.size:
-            raise ValueError("Dimensions do not match")
+            raise Exception("Dimensions do not match")
 
         self.amplitude = amp
         self.phase = phase

@@ -33,13 +33,13 @@ class TestPropagation:
         conv = ConvolutionPropagation(params)
         output_field = conv.propagate(field)
 
-        assert compare_np_arrays(expected_result, output_field.to_abs())
+        assert compare_np_arrays(expected_result, output_field.get_abs())
 
-    def test_NN_propagation(self, params, amplitude, phase):
+    def test_nn_propagation(self, params, amplitude, phase):
         expected_result = np.array([[0.00373122, 0.00186445], [0.00186445, 0.00093165]])
 
         field = LightField(amplitude, phase)
         conv = NNPropagation(params)
         output_field = conv.propagate(field)
 
-        assert compare_np_arrays(expected_result, output_field.to_abs())
+        assert compare_np_arrays(expected_result, output_field.get_abs())

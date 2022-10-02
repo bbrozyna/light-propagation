@@ -19,9 +19,9 @@ class Plotter:
         self.propagation_result = propagation_result
         logging.info("Plotting image data")
         plot_type = {
-            PlotTypes.ABS: self.propagation_result.to_abs,
+            PlotTypes.ABS: self.propagation_result.get_abs,
             PlotTypes.INTENSITY: self.propagation_result.to_intensity,
-            PlotTypes.PHASE: self.propagation_result.to_phase,
+            PlotTypes.PHASE: self.propagation_result.get_phase,
         }
         self.data = plot_type[output_type]()
 
