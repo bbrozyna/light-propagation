@@ -23,6 +23,7 @@ def load(file: str = None, **kwargs: Unpack[Fields]) -> LightField:
     if file is None:
         for (key, value) in kwargs.items():
             lf = __loaders[key].load(value)
+        return lf
     else:
         return __load_lf_file(file)
 
@@ -33,9 +34,6 @@ def __validate_args(file: str, **kwargs: Unpack[Fields]) -> None:
 
     if file and kwargs:
         raise ValueError(f"Cannot load both file and {kwargs.keys()}")
-
-    print(f"file: {file}")
-    print(f"items: {kwargs.items()}")
 
 
 def __load_lf_file(file: str) -> LightField:
