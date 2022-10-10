@@ -64,10 +64,11 @@ Every pull request should pass pre-commit stage to be merged
 
 #### Components:
 
-1. `lightprop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural network)
-2. `lightprop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
-3. `lightprop/algorithms.py` - set of methods used for calculating phase distribution and 
-
+1. `lightprop/io` - input/output functionalities, loading/saving images/files
+2. `lightprop/propagation` - core set of classes defining propagation calculations (convolution, neural network)
+3. `lightprop/lightfield` - field distribution representation using `A exp(i phi)` notation
+4. `lightprop/optimization` - set of methods used for calculating phase distribution 
+5. `lightprop/structures` - optical structures, like lens
 
 ## Contribution
 If you are interested in using/improving/developing this project, don't hesitate to contact us using email: 
