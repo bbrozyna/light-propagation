@@ -1,3 +1,5 @@
+import logging
+
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
@@ -12,6 +14,7 @@ class NNTrainer:
         self.params = propagation_params
         self.model = None
         self.history = None
+        self.log = logging.getLogger(type(self).__name__)
 
     def amplitudeMSE(self, y_true, y_pred):
         squared_difference = tf.square(y_true[0, 0] - y_pred[0, 0])
@@ -22,16 +25,19 @@ class NNTrainer:
         propagator = prop.NNPropagation(self.params)
         self.model = propagator.get_field_modifier()
 
+        self.log.info("Compiling model...")
         self.model.compile(
             optimizer=keras.optimizers.Adam(learning_rate=1e-2),
             loss=self.amplitudeMSE,
         )
 
         checkpoint_filepath = "./tmp/checkpoint"
+        self.log.info(f"Setting up checkpoint at {checkpoint_filepath}...")
         model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_filepath, save_weights_only=True, monitor="loss", mode="min", save_best_only=True
         )
 
+        self.log.info("Fitting model...")
         self.history = self.model.fit(
             propagator.get_field_distribution(input_field),
             propagator.get_field_distribution(target_field),
@@ -40,6 +46,7 @@ class NNTrainer:
             callbacks=[model_checkpoint_callback],
         )
 
+        self.log.info("Loading best configuration...")
         self.model.load_weights(checkpoint_filepath)
         return self.model
 

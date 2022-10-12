@@ -4,6 +4,7 @@ Created on Thu Aug  4 15:44:04 2022
 
 @author: PK
 """
+import logging
 
 import numpy as np
 
@@ -14,6 +15,8 @@ from lightprop.propagation.params import PropagationParams
 from lightprop.visualisation import Plotter, PlotTypes
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters

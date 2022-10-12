@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 
 from lightprop.calculations import get_gaussian_distribution
@@ -7,6 +9,8 @@ from lightprop.propagation.params import PropagationParams
 from lightprop.visualisation import Plotter, PlotTypes
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
