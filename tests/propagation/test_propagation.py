@@ -1,14 +1,14 @@
 import numpy as np
 import pytest
 
-from light_prop.calculations import (
+from lightprop.calculations import (
     compare_np_arrays,
     get_gaussian_distribution,
     get_lens_distribution,
 )
-from light_prop.lightfield import LightField
-from light_prop.propagation.methods import ConvolutionPropagation, NNPropagation
-from light_prop.propagation.params import PropagationParams
+from lightprop.lightfield import LightField
+from lightprop.propagation.methods import ConvolutionPropagation, NNPropagation
+from lightprop.propagation.params import PropagationParams
 
 
 class TestPropagation:
@@ -33,14 +33,13 @@ class TestPropagation:
         conv = ConvolutionPropagation(params)
         output_field = conv.propagate(field)
 
-        assert compare_np_arrays(expected_result, output_field.to_abs())
+        assert compare_np_arrays(expected_result, output_field.get_abs())
 
-    def test_NN_propagation(self, params, amplitude, phase):
-        # todo add test to check if matrixes are swapping quarters or reversing
+    def test_nn_propagation(self, params, amplitude, phase):
         expected_result = np.array([[0.00373122, 0.00186445], [0.00186445, 0.00093165]])
 
         field = LightField(amplitude, phase)
         conv = NNPropagation(params)
         output_field = conv.propagate(field)
 
-        assert compare_np_arrays(expected_result, output_field.to_abs())
+        assert compare_np_arrays(expected_result, output_field.get_abs())

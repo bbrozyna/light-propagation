@@ -1,37 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  4 14:09:21 2022
-
-@author: dr PK & be BB with mse MD
-"""
 import logging
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras
 
-import light_prop.propagation.methods as prop
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
-
-
-class GerchbergSaxton:
-    def __init__(self, propagation_params: PropagationParams):
-        self.params = propagation_params
-
-    def optimize(self, input_field: LightField, target_field: LightField, iterations: int = 5):
-        output_plane = target_field
-        input_plane = None
-
-        for _ in range(iterations):
-            output_plane.amplitude = target_field.amplitude
-            self.params.distance *= -1
-            input_plane = prop.ConvolutionPropagation(self.params).propagate(output_plane)
-            input_plane.amplitude = input_field.amplitude
-            self.params.distance *= -1
-            output_plane = prop.ConvolutionPropagation(self.params).propagate(input_plane)
-
-        return (input_plane, output_plane)
+import lightprop.propagation.methods as prop
+from lightprop.lightfield import LightField
+from lightprop.propagation.params import PropagationParams
 
 
 class NNTrainer:
@@ -39,6 +14,7 @@ class NNTrainer:
         self.params = propagation_params
         self.model = None
         self.history = None
+        self.log = logging.getLogger(type(self).__name__)
 
     def amplitudeMSE(self, y_true, y_pred):
         squared_difference = tf.square(y_true[0, 0] - y_pred[0, 0])
@@ -49,22 +25,19 @@ class NNTrainer:
         propagator = prop.NNPropagation(self.params)
         self.model = propagator.get_field_modifier()
 
-        logging.info("Model compiling")
+        self.log.info("Compiling model...")
         self.model.compile(
             optimizer=keras.optimizers.Adam(learning_rate=1e-2),
             loss=self.amplitudeMSE,
         )
 
         checkpoint_filepath = "./tmp/checkpoint"
+        self.log.info(f"Setting up checkpoint at {checkpoint_filepath}...")
         model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
-            filepath=checkpoint_filepath,
-            save_weights_only=True,
-            monitor="loss",
-            mode="min",
-            save_best_only=True,
+            filepath=checkpoint_filepath, save_weights_only=True, monitor="loss", mode="min", save_best_only=True
         )
 
-        logging.info("Fitting model to data")
+        self.log.info("Fitting model...")
         self.history = self.model.fit(
             propagator.get_field_distribution(input_field),
             propagator.get_field_distribution(target_field),
@@ -73,6 +46,7 @@ class NNTrainer:
             callbacks=[model_checkpoint_callback],
         )
 
+        self.log.info("Loading best configuration...")
         self.model.load_weights(checkpoint_filepath)
         return self.model
 

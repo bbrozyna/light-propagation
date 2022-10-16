@@ -1,18 +1,23 @@
+import logging
+
 import numpy as np
 
-from light_prop.algorithms import NNTrainer
-from light_prop.calculations import get_gaussian_distribution
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
-from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
+from lightprop.calculations import get_gaussian_distribution
+from lightprop.lightfield import LightField
+from lightprop.optimization.nn import NNTrainer
+from lightprop.propagation.params import PropagationParams
+from lightprop.visualisation import Plotter, PlotTypes
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
     params.beam_diameter = 2
     params.matrix_size = 128
     params.pixel_size = 0.5
+
     # Define target optical field and input amplitude
     # In this example a simple focusing from wider Gaussian beam to the thinner one
     x0 = 0
@@ -42,15 +47,15 @@ if __name__ == "__main__":
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
+    plotter = Plotter(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
-    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField(target, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNtarget.png")
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(LightField(amp, phase), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField(amp, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNinput.png")
 
     # Plot the result - output amplitude
@@ -72,5 +77,5 @@ if __name__ == "__main__":
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
     # Plot the result
-    plotter = GeneratePropagationPlot(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNresult.png")

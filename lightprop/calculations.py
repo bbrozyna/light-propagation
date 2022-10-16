@@ -1,6 +1,6 @@
 import numpy as np
 
-from light_prop.propagation.params import PropagationParams
+from lightprop.propagation.params import PropagationParams
 
 
 def h(r, distance, wavelength):

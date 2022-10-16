@@ -4,16 +4,19 @@ Created on Thu Aug  4 15:44:04 2022
 
 @author: PK
 """
+import logging
 
 import numpy as np
 
-from light_prop.algorithms import GerchbergSaxton
-from light_prop.calculations import gaussian, get_gaussian_distribution
-from light_prop.lightfield import LightField
-from light_prop.propagation.params import PropagationParams
-from light_prop.visualisation import GeneratePropagationPlot, PlotTypes
+from lightprop.calculations import gaussian, get_gaussian_distribution
+from lightprop.lightfield import LightField
+from lightprop.optimization.gs import GerchbergSaxton
+from lightprop.propagation.params import PropagationParams
+from lightprop.visualisation import Plotter, PlotTypes
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
@@ -58,19 +61,20 @@ if __name__ == "__main__":
     input_plane, output_plane = GS.optimize(LightField(amp, phase), LightField(target, phase), iterations=3)
 
     # Plot the result - optimized phase map
-    plotter = GeneratePropagationPlot(input_plane, output_type=PlotTypes.PHASE)
+    plotter = Plotter(input_plane, output_type=PlotTypes.PHASE)
     plotter.save_output_as_figure("outs/structure.png")
     plotter.show()
 
     # Plot the input amplitude
-    plotter = GeneratePropagationPlot(input_plane, output_type=PlotTypes.ABS)
+    plotter = Plotter(input_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/input_field.png")
+
     # Plot the result - output amplitude
-    plotter = GeneratePropagationPlot(output_plane, output_type=PlotTypes.ABS)
+    plotter = Plotter(output_plane, output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/result.png")
     plotter.show()
 
     # Plot the target amplitude
-    plotter = GeneratePropagationPlot(LightField(target, phase), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField(target, phase), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/target.png")
     plotter.show()

@@ -53,34 +53,25 @@ Every pull request should pass pre-commit stage to be merged
 
 ****For a quick start, please refer to our examples:****
 
-1. Exemplary usage of propagation with two methods - pure convolution and convolutional diffractive neural network.
-
-```commandline
-    python propagation_example.py
-```
-
-2. Exemplary usage of structure optimization through neural network optimization
-
-```commandline
-    python NN_training_example.py
-```
-
-3. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
-
-```commandline
-    python GS_example.py
-```
+1. Exemplary usage of structure optimization through neural network optimization
+    ```commandline
+        python doc/examples/nn_training.py
+    ```
+2. Exemplary usage of structure optimization using Gerchberg-Saxton algorithm.
+    ```commandline
+        python doc/examples/gerchberg_saxton.py
+    ```
 
 #### Components:
 
-1. `light_prop/propagation/methods.py` - core set of classes defining propagation calculations (convolution, neural
-   network)
-2. `light_prop/lightfield.py` - field distribution representation using `A exp(i phi)`  notation
-3. `light_prop/algorithms.py` - set of methods used for calculating phase distribution and
+1. `lightprop/io` - input/output functionalities, loading/saving images/files
+2. `lightprop/propagation` - core set of classes defining propagation calculations (convolution, neural network)
+3. `lightprop/lightfield` - field distribution representation using `A exp(i phi)` notation
+4. `lightprop/optimization` - set of methods used for calculating phase distribution 
+5. `lightprop/structures` - optical structures, like lens
 
 ## Contribution
-
-If you are interested in using/improving/developing this project, don't hesitate to contact us using email:
+If you are interested in using/improving/developing this project, don't hesitate to contact us using email: 
 pawel.komorowski@wat.edu.pl
 
 ## License
