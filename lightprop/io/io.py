@@ -7,6 +7,30 @@ from lightprop.lightfield import LightField
 def load(
     *, full_file: str = None, re_file: str = None, im_file: str = None, amp_file: str = None, phase_file: str = None
 ) -> LightField:
+    """
+    Loads given files into LightField data structure. Either full_file, any single field file, or a pair of
+    complementary fields is a valid argument combination. full_file must be of .lf type, field files should be images
+    (any format supported by PIL library).
+
+    Example usage:
+
+    >>> lf = load(full_file="holo.lf")
+
+    >>> lf = load(re_file="real.png")
+
+    >>> lf = load(amp_file="amplitude.png", phase_file="/some/directory/phase.bmp")
+
+    Invalid usages:
+
+    >>> lf = load(re_file="real.png", phase_file="/some/directory/phase.bmp")
+
+    :param full_file: path to the custom file (.lf) with full field info
+    :param re_file: path to the image with REAL part of complex field
+    :param im_file: path to the image with IMAGINARY part of complex field
+    :param amp_file: path to the image with AMPLITUDE information of complex field
+    :param phase_file: path to the image with PHASE information of complex field
+    :return: fully initialized LightField instance
+    """
     # load file with full field data
     if full_file:
         return __load_full(full_file)
