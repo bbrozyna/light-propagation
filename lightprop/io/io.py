@@ -46,9 +46,9 @@ def __load_field(field: str, file: str) -> LightField:
 
     # TODO this just looks wrong...
     if field in ["re", "im", "amplitude"]:
-        return LightField(data, np.zeros(data.size))
+        return LightField(data, np.zeros(data.shape))
     else:  # if field == "phase"
-        return LightField(np.ones(data.size), data)
+        return LightField(np.ones(data.shape), data)
 
 
 def __load_image(file: str) -> np.ndarray:
@@ -58,7 +58,7 @@ def __load_image(file: str) -> np.ndarray:
     :return: np.ndarray
     """
     img = Image.open(file).convert("L")
-    return np.array(img.getdata(), dtype=np.uint8).astype("float32") / 255.0
+    return np.array(img.getdata(), dtype=np.uint8).astype("float32").reshape(img.size) / 255.0
 
 
 def __load_full(file: str) -> LightField:

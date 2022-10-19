@@ -1,16 +1,22 @@
+import numpy as np
 import pytest
 
 import lightprop as lp
 
 gray_png = "data/gray256.png"
 gray_bmp = "data/gray256.bmp"
+gray_shape = (16, 16)
 
 
 @pytest.mark.parametrize("field", ["re", "im", "amp", "phase"])
 @pytest.mark.parametrize("file", [gray_png, gray_bmp])
 def test_should_load_file_as_field(field, file):
     field = f"{field}_file"
-    assert lp.load(**{field: file})
+    lf = lp.load(**{field: file})
+    assert lf
+    assert lf.amplitude.shape == gray_shape
+    assert lf.phase.shape == gray_shape
+    assert np.count_nonzero(lf.amplitude) or np.count_nonzero(lf.phase)
 
 
 @pytest.mark.parametrize("fields", [("re", "im"), ("amp", "phase")])
