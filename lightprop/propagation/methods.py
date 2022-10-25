@@ -27,10 +27,10 @@ class BasePropagation:
         field_distribution = self.get_field_distribution(propagation_input)
         field_modifier = self.get_field_modifier()
         output = self.reshape_output(self.calculate_propagation(field_distribution, field_modifier))
-        return LightField.from_complex_array(output)
+        return LightField.from_complex_array(output, self.params.wavelength, self.params.pixel_size)
 
     def get_field_distribution(self, propagation_input):
-        return propagation_input.to_complex()
+        return propagation_input.get_complex_field()
 
     def get_field_modifier(self):
         raise NotImplementedError("Please implement field modifier")
