@@ -1,10 +1,12 @@
+import os
+
 import numpy as np
 import pytest
 
 import lightprop as lp
 
-gray_png = "data/gray256.png"
-gray_bmp = "data/gray256.bmp"
+gray_png = os.path.abspath("tests/data/gray256.png")
+gray_bmp = os.path.abspath("tests/data/gray256.bmp")
 gray_shape = (16, 16)
 
 
