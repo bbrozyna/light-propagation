@@ -1,13 +1,14 @@
 import logging
+import numpy as np
 
 from lightprop.lightfield import LightField
 from lightprop.propagation import methods as prop
 
 
 class GerchbergSaxton:
-    def __init__(self, propagation_params):
-        self.params = propagation_params
+    def __init__(self, distance: float):
         self.log = logging.getLogger(type(self).__name__)
+        self.distance = distance
 
     def optimize(self, input_field: LightField, target_field: LightField, iterations: int = 5):
         output_plane = target_field
@@ -15,11 +16,9 @@ class GerchbergSaxton:
 
         for _i in range(iterations):
             self.log.info(f"iteration: {_i + 1}/{iterations}")
-            output_plane.amplitude = target_field.amplitude
-            self.params.distance *= -1
-            input_plane = prop.ConvolutionPropagation(self.params).propagate(output_plane)
-            input_plane.amplitude = input_field.amplitude
-            self.params.distance *= -1
-            output_plane = prop.ConvolutionPropagation(self.params).propagate(input_plane)
+            output_plane.amp = target_field.get_amplitude()
+            input_plane = prop.ConvolutionPropagation().propagate(output_plane, - self.distance)
+            input_plane.amp = input_field.get_amplitude()
+            output_plane = prop.ConvolutionPropagation().propagate(input_plane, self.distance)
 
         return input_plane, output_plane

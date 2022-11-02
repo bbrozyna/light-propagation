@@ -2,37 +2,36 @@ import numpy as np
 
 
 class LightField:
-    def __init__(self, re: np.array, im: np.array, wavelength: float, pixel_size: float):
-        if re.size != im.size:
+    def __init__(self, amp: np.array, phase: np.array, wavelength: float, pixel_size: float):
+        if amp.size != phase.size:
             raise Exception("Dimensions do not match")
 
-        self.re = re
-        self.im = im
-        self.matrix_size = re.shape[0]
+        self.amp = amp
+        self.phase = phase
+        self.matrix_size = amp.shape[0]
         self.wavelength = wavelength
         self.pixel = pixel_size
 
-    def get_abs(self):
-        return np.sqrt(self.re**2 + self.im**2)
+    def get_amplitude(self):
+        return self.amp
 
     def get_intensity(self):
-        return self.re**2 + self.im**2
+        return self.amp**2
 
     def get_phase(self):
-        # Errors may occur for the points on the axes. Avoid them.
-        return 2 * np.arctan(self.im / (np.sqrt(self.re**2 + self.im**2) + self.re))
+        return self.phase
 
     def get_re(self):
-        return self.re
+        return self.amp * np.cos(self.phase)
 
     def get_im(self):
-        return self.im
+        return self.amp * np.sin(self.phase)
 
     def get_complex_field(self):
-        return self.re + (1j * self.im)
+        return self.amp * np.exp(1j * self.phase)
 
     def __add__(self, other):
-        if self.re.size != other.re.size:
+        if self.amp.size != other.amp.size:
             raise Exception("Dimensions do not match")
 
         if self.wavelength != other.wavelength:
@@ -41,12 +40,12 @@ class LightField:
         if self.pixel != other.pixel:
             raise Exception("Lightfields must have the same pixel size")    
 
-        re = self.re + other.re
-        im = self.im + other.im
-        return LightField(re, im, self.wavelength, self.pixel)
+        re = self.get_re() + other.get_re()
+        im = self.get_im() + other.get_im()
+        return LightField.from_re_im(re, im, self.wavelength, self.pixel)
 
     def __sub__(self, other):
-        if self.re.size != other.re.size:
+        if self.amp.size != other.amp.size:
             raise Exception("Dimensions do not match")
 
         if self.wavelength != other.wavelength:
@@ -55,12 +54,12 @@ class LightField:
         if self.pixel != other.pixel:
             raise Exception("Lightfields must have the same pixel size") 
         
-        re = self.re - other.re
-        im = self.im - other.im
-        return LightField(re, im, self.wavelength, self.pixel)
+        re = self.get_re() - other.get_re()
+        im = self.get_im() - other.get_im()
+        return LightField.from_re_im(re, im, self.wavelength, self.pixel)
 
     def __mul__(self, other):
-        if self.re.size != other.re.size:
+        if self.amp.size != other.amp.size:
             raise Exception("Dimensions do not match")
 
         if self.wavelength != other.wavelength:
@@ -69,20 +68,21 @@ class LightField:
         if self.pixel != other.pixel:
             raise Exception("Lightfields must have the same pixel size") 
 
-        re = self.re * other.re - self.im * other.im
-        im = self.re * other.im + self.im * other.re
-        return LightField(re, im, self.wavelength, self.pixel)
+        amp = self.get_amplitude() * other.get_amplitude()
+        phase = self.get_phase() + other.get_phase()
+        return LightField(amp, phase, self.wavelength, self.pixel)
 
     @classmethod
     def from_complex_array(cls, complex_array, wavelength, pixel_size):
-        re = np.real(complex_array)
-        im = np.imag(complex_array)
-        return cls(re, im, wavelength, pixel_size)
+        amp = np.abs(complex_array)
+        phase = np.angle(complex_array)
+        return cls(amp, phase, wavelength, pixel_size)
 
     @classmethod
-    def from_polar_coordinates(cls, amp, phase, wavelength, pixel_size):
-        if amp.size != phase.size:
+    def from_re_im(cls, re, im, wavelength, pixel_size):
+        if re.size != im.size:
             raise Exception("Dimensions do not match")
-        re = amp * np.cos(phase)
-        im = amp * np.sin(phase)
-        return cls(re, im, wavelength, pixel_size)
+        amp = np.sqrt(re**2 + im**2)
+        phase = np.arctan(im / re)
+        phase[np.isnan(phase)] = 0
+        return cls(amp, phase, wavelength, pixel_size)

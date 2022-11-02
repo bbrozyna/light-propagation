@@ -30,18 +30,18 @@ class TestPropagation:
         expected_result = np.array([[0.00093165, 0.00186445], [0.00186445, 0.00373122]])
         wavelength = 1
         pixel = 0.1
-        field = LightField.from_polar_coordinates(amplitude, phase, wavelength, pixel)
-        conv = ConvolutionPropagation(params)
-        output_field = conv.propagate(field)
+        field = LightField(amplitude, phase, wavelength, pixel)
+        conv = ConvolutionPropagation()
+        output_field = conv.propagate(field, 500)
 
-        assert compare_np_arrays(expected_result, output_field.get_abs())
+        assert compare_np_arrays(expected_result, output_field.get_amplitude())
 
     def test_nn_propagation(self, params, amplitude, phase):
         expected_result = np.array([[0.00373122, 0.00186445], [0.00186445, 0.00093165]])
         wavelength = 1
         pixel = 0.1
-        field = LightField.from_polar_coordinates(amplitude, phase, wavelength, pixel)
+        field = LightField(amplitude, phase, wavelength, pixel)
         conv = NNPropagation(params)
         output_field = conv.propagate(field)
 
-        assert compare_np_arrays(expected_result, output_field.get_abs())
+        assert compare_np_arrays(expected_result, output_field.get_amplitude())

@@ -42,29 +42,31 @@ class BasePropagation:
         return data
 
 
-class ConvolutionPropagation(BasePropagation):
-    def __init__(self, propagation_params):
-        super().__int__(propagation_params)
-
-    def get_field_modifier(self):
+class ConvolutionPropagation():
+    
+    def calculate_kernel(self, distance, wavelength, matrix_size, pixel_size):
         hkernel = np.array(
             [
                 [
                     h(
                         np.sqrt(x**2 + y**2),
-                        self.params.distance,
-                        self.params.wavelength,
+                        distance,
+                        wavelength,
                     )
-                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2)
-                    * self.params.pixel_size
+                    for x in np.arange(-matrix_size / 2, matrix_size / 2)
+                    * pixel_size
                 ]
-                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size
+                for y in np.arange(-matrix_size / 2, matrix_size / 2) * pixel_size
             ]
         )
         return hkernel
 
-    def calculate_propagation(self, field_distribution, field_modifier):
-        return signal.fftconvolve(field_distribution, field_modifier, mode="same")
+    def propagate(self, propagation_input: LightField, distance: float) -> LightField:
+            logging.info("Calculating propagation")
+            field_distribution = propagation_input.get_complex_field()
+            kernel = self.calculate_kernel(distance, propagation_input.wavelength, propagation_input.matrix_size, propagation_input.pixel)
+            output = signal.fftconvolve(field_distribution, kernel, mode="same")
+            return LightField.from_complex_array(output, propagation_input.wavelength, propagation_input.pixel)
 
 
 class NNPropagation(ConvolutionPropagation):
