@@ -69,101 +69,202 @@ class ConvolutionPropagation():
             return LightField.from_complex_array(output, propagation_input.wavelength, propagation_input.pixel)
 
 
-class NNPropagation(ConvolutionPropagation):
-    def __init__(self, propagation_params):
-        super().__init__(propagation_params)
+# class NNPropagation(ConvolutionPropagation):
+#     def __init__(self, propagation_params):
+#         super().__init__(propagation_params)
 
-    def get_field_distribution(self, propagation_input):
-        field = super().get_field_distribution(propagation_input)
-        field = np.array([np.real(field), np.imag(field)])
+#     def get_field_distribution(self, propagation_input):
+#         field = super().get_field_distribution(propagation_input)
+#         field = np.array([np.real(field), np.imag(field)])
+#         field = field.reshape(
+#             (
+#                 1,
+#                 2,
+#                 self.params.matrix_size,
+#                 self.params.matrix_size,
+#             ),
+#             order="F",
+#         )
+#         return field
+
+#     def custom_weights(self, shape, dtype=None, re=False):
+#         func = np.sin if re else np.cos
+#         kernel = np.array(
+#             [
+#                 [
+#                     1
+#                     / (self.params.distance * self.params.wavelength)
+#                     * func(
+#                         np.pi * np.sqrt(x**2 + y**2) ** 2 / (self.params.distance * self.params.wavelength)
+#                         + 2 * np.pi * self.params.distance / self.params.wavelength
+#                     )
+#                     for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2)
+#                     * self.params.pixel_size
+#                 ]
+#                 for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size
+#             ]
+#         )
+#         kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size, 1, 1)
+#         return kernel
+
+#     def custom_weights_Re(self, shape, dtype=None):
+#         return self.custom_weights(shape, dtype, re=True)
+
+#     def custom_weights_Im(self, shape, dtype=None):
+#         return self.custom_weights(shape, dtype, re=False)
+
+#     def get_field_modifier(self):
+#         inputs = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
+#         x = Aexp()(inputs)
+#         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+
+#         x = Structure(kernel_initializer=keras.initializers.Zeros())(x)
+#         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+
+#         x = ReIm_convert()(x)
+#         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+
+#         Re = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(x)
+#         Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
+#         Im = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(x)
+#         Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
+
+#         ReRe = Convolution2D(
+#             1,
+#             self.params.matrix_size,
+#             padding="same",
+#             kernel_initializer=self.custom_weights_Re,
+#             use_bias=False,
+#         )(Re)
+#         ImRe = Convolution2D(
+#             1,
+#             self.params.matrix_size,
+#             padding="same",
+#             kernel_initializer=self.custom_weights_Im,
+#             use_bias=False,
+#         )(Re)
+#         ReIm = Convolution2D(
+#             1,
+#             self.params.matrix_size,
+#             padding="same",
+#             kernel_initializer=self.custom_weights_Re,
+#             use_bias=False,
+#         )(Im)
+#         ImIm = Convolution2D(
+#             1,
+#             self.params.matrix_size,
+#             padding="same",
+#             kernel_initializer=self.custom_weights_Im,
+#             use_bias=False,
+#         )(Im)
+
+#         Re = keras.layers.Subtract()([ReRe, ImIm])
+#         Im = keras.layers.Add()([ReIm, ImRe])
+#         x = keras.layers.Concatenate(axis=1)([Re, Im])
+#         x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+#         x = Aexp()(x)
+#         outputs = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+
+#         model = keras.Model(inputs=inputs, outputs=outputs)
+
+#         for layer in model.layers[:]:
+#             layer.trainable = False
+#         model.layers[3].trainable = True
+
+#         return model
+
+#     def calculate_propagation(self, field_distribution, field_modifier):
+#         conv = field_modifier(field_distribution)
+#         return conv.numpy()
+
+#     def reshape_output(self, data):
+#         return data[0, 0, :, :] * np.exp(1j * data[0, 1, :, :])
+
+class NNPropagation():
+    
+    def prepare_input_field(self, propagation_input: LightField):
+        field = np.array([propagation_input.get_re(), propagation_input.get_im()])
         field = field.reshape(
             (
                 1,
                 2,
-                self.params.matrix_size,
-                self.params.matrix_size,
+                propagation_input.matrix_size,
+                propagation_input.matrix_size,
             ),
             order="F",
         )
         return field
 
-    def custom_weights(self, shape, dtype=None, re=False):
-        func = np.sin if re else np.cos
+    def calculate_kernel(self, distance, wavelength, matrix_size, pixel_size):
         kernel = np.array(
             [
                 [
-                    1
-                    / (self.params.distance * self.params.wavelength)
-                    * func(
-                        np.pi * np.sqrt(x**2 + y**2) ** 2 / (self.params.distance * self.params.wavelength)
-                        + 2 * np.pi * self.params.distance / self.params.wavelength
+                    h(
+                        np.sqrt(x**2 + y**2),
+                        distance,
+                        wavelength,
                     )
-                    for x in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2)
-                    * self.params.pixel_size
+                    for x in np.arange(-matrix_size / 2, matrix_size / 2)
+                    * pixel_size
                 ]
-                for y in np.arange(-self.params.matrix_size / 2, self.params.matrix_size / 2) * self.params.pixel_size
+                for y in np.arange(-matrix_size / 2, matrix_size / 2) * pixel_size
             ]
         )
-        kernel = kernel.reshape(self.params.matrix_size, self.params.matrix_size, 1, 1)
+        kernel = kernel.reshape(matrix_size, matrix_size, 1, 1)
         return kernel
 
-    def custom_weights_Re(self, shape, dtype=None):
-        return self.custom_weights(shape, dtype, re=True)
 
-    def custom_weights_Im(self, shape, dtype=None):
-        return self.custom_weights(shape, dtype, re=False)
-
-    def get_field_modifier(self):
-        inputs = keras.Input(shape=(2, self.params.matrix_size, self.params.matrix_size))
+    def build_model(self, matrix_size: int):
+        inputs = keras.Input(shape=(2, matrix_size, matrix_size))
         x = Aexp()(inputs)
-        x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
         x = Structure(kernel_initializer=keras.initializers.Zeros())(x)
-        x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
         x = ReIm_convert()(x)
-        x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
         Re = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(x)
-        Re = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Re)
+        Re = keras.layers.Reshape((matrix_size, matrix_size, 1))(Re)
         Im = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(x)
-        Im = keras.layers.Reshape((self.params.matrix_size, self.params.matrix_size, 1))(Im)
+        Im = keras.layers.Reshape((matrix_size, matrix_size, 1))(Im)
 
         ReRe = Convolution2D(
             1,
-            self.params.matrix_size,
+            matrix_size,
             padding="same",
-            kernel_initializer=self.custom_weights_Re,
+            kernel_initializer=keras.initializers.Zeros(),
             use_bias=False,
         )(Re)
         ImRe = Convolution2D(
             1,
-            self.params.matrix_size,
+            matrix_size,
             padding="same",
-            kernel_initializer=self.custom_weights_Im,
+            kernel_initializer=keras.initializers.Zeros(),
             use_bias=False,
         )(Re)
         ReIm = Convolution2D(
             1,
-            self.params.matrix_size,
+            matrix_size,
             padding="same",
-            kernel_initializer=self.custom_weights_Re,
+            kernel_initializer=keras.initializers.Zeros(),
             use_bias=False,
         )(Im)
         ImIm = Convolution2D(
             1,
-            self.params.matrix_size,
+            matrix_size,
             padding="same",
-            kernel_initializer=self.custom_weights_Im,
+            kernel_initializer=keras.initializers.Zeros(),
             use_bias=False,
         )(Im)
 
         Re = keras.layers.Subtract()([ReRe, ImIm])
         Im = keras.layers.Add()([ReIm, ImRe])
         x = keras.layers.Concatenate(axis=1)([Re, Im])
-        x = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
         x = Aexp()(x)
-        outputs = keras.layers.Reshape((2, self.params.matrix_size, self.params.matrix_size))(x)
+        outputs = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
         model = keras.Model(inputs=inputs, outputs=outputs)
 
@@ -173,9 +274,21 @@ class NNPropagation(ConvolutionPropagation):
 
         return model
 
-    def calculate_propagation(self, field_distribution, field_modifier):
-        conv = field_modifier(field_distribution)
-        return conv.numpy()
+    
+    
+    def propagate(self, propagation_input: LightField, distance: float) -> LightField:
+            logging.info("Calculating propagation")
+            field_distribution = self.prepare_input_field(propagation_input)
+            
+            kernel = self.calculate_kernel(distance, propagation_input.wavelength, propagation_input.matrix_size, propagation_input.pixel)
+            
+            model = self.build_model(propagation_input.matrix_size)
 
-    def reshape_output(self, data):
-        return data[0, 0, :, :] * np.exp(1j * data[0, 1, :, :])
+            model.layers[11].set_weights([np.real(kernel)])
+            model.layers[12].set_weights([np.imag(kernel)])
+            model.layers[13].set_weights([np.real(kernel)])
+            model.layers[14].set_weights([np.imag(kernel)])
+
+            conv = model(field_distribution).numpy()
+
+            return LightField.from_re_im(conv[0, 0, :, :], conv[0, 1, :, :], propagation_input.wavelength, propagation_input.pixel)

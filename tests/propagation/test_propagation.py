@@ -41,7 +41,7 @@ class TestPropagation:
         wavelength = 1
         pixel = 0.1
         field = LightField(amplitude, phase, wavelength, pixel)
-        conv = NNPropagation(params)
-        output_field = conv.propagate(field)
+        conv = NNPropagation()
+        output_field = conv.propagate(field, 500)
 
         assert compare_np_arrays(expected_result, output_field.get_amplitude())
