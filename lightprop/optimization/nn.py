@@ -21,14 +21,16 @@ class NNTrainer:
 
         return tf.reduce_mean(squared_difference, axis=-1)
 
-    def optimize(self, input_field: LightField, target_field: LightField, iterations: int = 100):
-        propagator = prop.NNPropagation(self.params)
-        self.model = propagator.get_field_modifier()
+    def optimize(self, input_field: LightField, target_field: LightField, distance, iterations: int = 100):
+        propagator = prop.NNPropagation()
+        self.model = propagator.build_model(self.params.matrix_size)
+
+        self.model = propagator.set_kernels(self.model, input_field, distance)
 
         self.log.info("Compiling model...")
         self.model.compile(
             optimizer=keras.optimizers.Adam(learning_rate=1e-2),
-            loss=self.amplitudeMSE,
+            loss=keras.losses.MeanSquaredError(),
         )
 
         checkpoint_filepath = "./tmp/checkpoint"
@@ -39,8 +41,8 @@ class NNTrainer:
 
         self.log.info("Fitting model...")
         self.history = self.model.fit(
-            propagator.get_field_distribution(input_field),
-            propagator.get_field_distribution(target_field),
+            propagator.prepare_input_field(input_field),
+            propagator.prepare_input_field(target_field),
             batch_size=1,
             epochs=iterations,
             callbacks=[model_checkpoint_callback],

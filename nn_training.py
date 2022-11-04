@@ -34,7 +34,12 @@ if __name__ == "__main__":
     # Run NN optimization
     # Please try running different numbers of iterations (last parameter)
     # Check the difference in the output for different amounts of training
-    trained_model = NN.optimize(LightField(amp, phase), LightField(target, phase), iterations=200)
+    trained_model = NN.optimize(
+        LightField(amp, phase, params.wavelength, params.pixel_size),
+        LightField(target, phase, params.wavelength, params.pixel_size),
+        params.distance,
+        iterations=1000,
+    )
 
     # Plot loss vs epochs
     NN.plot_loss()
@@ -43,15 +48,17 @@ if __name__ == "__main__":
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
     # Plot the result - optimized phase map
-    plotter = Plotter(LightField(amp, optimized_phase), output_type=PlotTypes.PHASE)
+    plotter = Plotter(
+        LightField(amp, optimized_phase, params.wavelength, params.pixel_size), output_type=PlotTypes.PHASE
+    )
     plotter.save_output_as_figure("outs/NNstructure.png")
 
     # Plot the target amplitude
-    plotter = Plotter(LightField(target, phase), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField(target, phase, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNtarget.png")
 
     # Plot the input amplitude
-    plotter = Plotter(LightField(amp, phase), output_type=PlotTypes.ABS)
+    plotter = Plotter(LightField(amp, phase, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS)
     plotter.save_output_as_figure("outs/NNinput.png")
 
     # Plot the result - output amplitude
@@ -73,5 +80,7 @@ if __name__ == "__main__":
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
     # Plot the result
-    plotter = Plotter(LightField.from_complex_array(result), output_type=PlotTypes.ABS)
+    plotter = Plotter(
+        LightField.from_complex_array(result, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS
+    )
     plotter.save_output_as_figure("outs/NNresult.png")
