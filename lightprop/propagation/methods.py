@@ -14,33 +14,14 @@ from tensorflow import keras
 
 from lightprop.calculations import h
 from lightprop.lightfield import LightField
-from lightprop.propagation.keras_layers import Aexp, ReIm_convert, Structure
+from lightprop.propagation.keras_layers import (
+    Aexp,
+    Convolve,
+    ReIm_convert,
+    Slice,
+    Structure,
+)
 from lightprop.propagation.params import PropagationParams
-
-
-class BasePropagation:
-    def __int__(self, propagation_params: PropagationParams):
-        self.params = propagation_params
-
-    def propagate(self, propagation_input: LightField) -> LightField:
-        logging.info("Calculating propagation")
-        field_distribution = self.get_field_distribution(propagation_input)
-        field_modifier = self.get_field_modifier()
-        output = self.reshape_output(self.calculate_propagation(field_distribution, field_modifier))
-        return LightField.from_complex_array(output, self.params.wavelength, self.params.pixel_size)
-
-    def get_field_distribution(self, propagation_input):
-        return propagation_input.get_complex_field()
-
-    def get_field_modifier(self):
-        raise NotImplementedError("Please implement field modifier")
-
-    def calculate_propagation(self, field_distribution, field_modifier):
-        return None
-
-    def reshape_output(self, data):
-        return data
-
 
 class ConvolutionPropagation:
     def calculate_kernel(self, distance, wavelength, matrix_size, pixel_size):
@@ -185,3 +166,60 @@ class NNPropagation:
         return LightField.from_re_im(
             conv[0, 0, :, :], conv[0, 1, :, :], propagation_input.wavelength, propagation_input.pixel
         )
+
+class MultiparameterNNPropagation(NNPropagation):
+    
+    def propagate(self, propagation_input: LightField, kernel: LightField) -> LightField:
+        logging.info("Calculating propagation")
+        field_distribution = self.prepare_input_field(propagation_input)
+        model = self.build_model(propagation_input.matrix_size)
+        conv = model(field_distribution, kernel).numpy()
+        return LightField.from_re_im(
+            conv[0, 0, :, :], conv[0, 1, :, :], propagation_input.wavelength, propagation_input.pixel
+        )
+
+    def build_model(self, matrix_size: int):
+        inputField = keras.Input(shape=(2, matrix_size, matrix_size))
+        Kernel = keras.Input(shape=(2, matrix_size, matrix_size), batch_size=1)
+
+        x = Aexp()(inputField)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        x = Structure(kernel_initializer=keras.initializers.Zeros())(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        x = ReIm_convert()(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        Re = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(x)
+        Re = keras.layers.Reshape((matrix_size, matrix_size, 1))(Re)
+        Im = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(x)
+        Im = keras.layers.Reshape((matrix_size, matrix_size, 1))(Im)
+
+        KernelRe = keras.layers.Cropping2D(cropping=((1, 0), (0, 0)))(Kernel)
+        KernelRe = keras.layers.Reshape((matrix_size, matrix_size, 1))(KernelRe)
+        KernelRe = Slice()(KernelRe)
+        KernelIm = keras.layers.Cropping2D(cropping=((0, 1), (0, 0)))(Kernel)
+        KernelIm = keras.layers.Reshape((matrix_size, matrix_size, 1))(KernelIm)
+        KernelIm = Slice()(KernelIm)
+
+        ReRe = Convolve()([Re, KernelRe])
+        ImRe = Convolve()([Re, KernelIm])
+        ReIm = Convolve()([Im, KernelRe])
+        ImIm = Convolve()([Im, KernelIm])
+
+        Re = keras.layers.Subtract()([ReRe, ImIm])
+        Im = keras.layers.Add()([ReIm, ImRe])
+        x = keras.layers.Concatenate(axis=1)([Re, Im])
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+        x = Aexp()(x)
+        outputs = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        model = keras.Model(inputs=[inputField, Kernel], outputs=outputs)
+
+        for layer in model.layers[:]:
+            layer.trainable = False
+        model.layers[3].trainable = True
+
+        return model
+
