@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     # Choose proper propagation parameters
     params.beam_diameter = 2
-    params.matrix_size = 32
+    params.matrix_size = 128
     params.pixel_size = 0.8
 
     # Define target optical field and input amplitude
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         LightField(amp, phase, params.wavelength, params.pixel_size),
         LightField(target, phase, params.wavelength, params.pixel_size),
         params.distance,
-        iterations=100,
+        iterations=250,
     )
 
     # Plot loss vs epochs

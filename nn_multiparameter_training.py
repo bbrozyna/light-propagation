@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Choose proper propagation parameters
     params.beam_diameter = 2
     params.matrix_size = 128
-    params.pixel_size = 0.5
+    params.pixel_size = 0.8
     # Define target optical field and input amplitude
     # In this example a simple focusing from wider Gaussian beam to the thinner one
     x0 = 0
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         LightField(target, phase, params.wavelength, params.pixel_size),
         LightField.from_complex_array(kernel, params.wavelength, params.pixel_size),
         params.distance,
-        iterations=100,
+        iterations=500,
     )
 
     # Plot loss vs epochs
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     plotter = Plotter(
         LightField(amp, optimized_phase, params.wavelength, params.pixel_size), output_type=PlotTypes.PHASE
     )
-    plotter.save_output_as_figure("outs/NNstructure.png")
+    plotter.save_output_as_figure("outs/NNMultiStructure.png")
 
     # Plot the target amplitude
     plotter = Plotter(LightField(target, phase, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS)
@@ -105,5 +105,5 @@ if __name__ == "__main__":
     plotter = Plotter(
         LightField.from_complex_array(result, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS
     )
-    plotter.save_output_as_figure("outs/NNresult.png")
+    plotter.save_output_as_figure("outs/NNMultiResult.png")
     

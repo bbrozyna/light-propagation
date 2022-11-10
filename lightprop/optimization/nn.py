@@ -20,6 +20,11 @@ class NNTrainer:
 
         return tf.reduce_mean(squared_difference, axis=-1)
 
+    def intensityMSE(self, y_true, y_pred):
+        squared_difference = tf.square(tf.square(y_true[0, 0]) - tf.square(y_pred[0, 0]))
+
+        return tf.reduce_mean(squared_difference, axis=-1)
+
     def optimize(self, input_field: LightField, target_field: LightField, distance, iterations: int = 100):
         propagator = prop.NNPropagation()
         self.model = propagator.build_model(input_field.matrix_size)
@@ -28,8 +33,8 @@ class NNTrainer:
 
         self.log.info("Compiling model...")
         self.model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=1e-2),
-            loss=keras.losses.MeanSquaredError(),
+            optimizer=keras.optimizers.Adam(learning_rate=1e-1),
+            loss=self.intensityMSE,
         )
 
         checkpoint_filepath = "./tmp/checkpoint"
@@ -67,8 +72,8 @@ class NNMultiTrainer(NNTrainer):
         
         self.log.info("Compiling model...")
         self.model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=1e-2),
-            loss=keras.losses.MeanSquaredError(),
+            optimizer=keras.optimizers.Adam(learning_rate=1e-1),
+            loss=self.amplitudeMSE,
         )
 
         checkpoint_filepath = "./tmp/checkpoint"

@@ -5,9 +5,9 @@ from lightprop.propagation.params import PropagationParams
 
 def h(r, distance, wavelength):
     return (
-        np.exp(1j * 2 * np.pi / (wavelength * distance))
+        np.exp(1j * 2 * (np.pi / wavelength) * distance)
         / (1j * wavelength * distance)
-        * np.exp(1j * 2 * np.pi / (wavelength * 2 * distance) * r * r)
+        * np.exp(1j * np.pi / (wavelength * distance) * r * r)
     )
 
 

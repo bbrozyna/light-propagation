@@ -18,9 +18,9 @@ if __name__ == "__main__":
     params = PropagationParams.get_example_propagation_data()
 
     # Choose proper propagation parameters
-    params.beam_diameter = 5
-    params.matrix_size = 256
-    params.pixel_size = 0.9
+    params.beam_diameter = 2
+    params.matrix_size = 128
+    params.pixel_size = 0.8
 
     # Define target optical field and input amplitude
     # In this example two focal points placed outside the main optical axis
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     #         for y in np.arange(-params.matrix_size / 2, params.matrix_size / 2) * params.pixel_size
     #     ]
     # )
-    params.beam_diameter = 50
+    params.beam_diameter = 15
     amp = get_gaussian_distribution(params)
     phase = np.array(
         [
