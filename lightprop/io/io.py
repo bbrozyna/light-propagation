@@ -44,7 +44,7 @@ def load(
 
     # single field - simple, load and return as LightField
     if len(fields) == 1:
-        field_name, field_file = [(k, v) for k, v in fields.items() if v is not None][0]
+        ((field_name, field_file),) = fields.items()
         return __load_field(field_name, field_file)
 
     # complementary fields

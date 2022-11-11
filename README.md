@@ -43,6 +43,7 @@ This will add pre-commit to git hooks and perform all the checks defined in `.pr
 
 To check stying in all files, please use
 
+
     pre-commit run -a
 
 #### pre-commit in CI
