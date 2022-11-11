@@ -1,88 +1,43 @@
-class TestLoadingLFFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
+import os
 
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
+import numpy as np
+import pytest
 
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
+import lightprop as lp
 
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
-
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
-
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+gray_png = os.path.abspath("tests/data/gray256.png")
+gray_bmp = os.path.abspath("tests/data/gray256.bmp")
+gray_shape = (16, 16)
 
 
-class TestLoadingPNGFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
-
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
-
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
-
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
-
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
-
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+@pytest.mark.parametrize("field", ["re", "im", "amp", "phase"])
+@pytest.mark.parametrize("file", [gray_png, gray_bmp])
+def test_should_load_file_as_field(field, file):
+    field = f"{field}_file"
+    lf = lp.load(**{field: file})
+    assert lf
+    assert lf.amplitude.shape == gray_shape
+    assert lf.phase.shape == gray_shape
+    assert np.count_nonzero(lf.amplitude) or np.count_nonzero(lf.phase)
 
 
-class TestLoadingBMPFiles:
-    def test_loading_existing_file_as_str_succeeds(self):
-        pass
+@pytest.mark.parametrize("fields", [("re", "im"), ("amp", "phase")])
+@pytest.mark.parametrize("file1", [gray_png, gray_bmp])
+@pytest.mark.parametrize("file2", [gray_png, gray_bmp])
+def test_should_load_two_complementary_fields(fields, file1, file2):
+    field1 = f"{fields[0]}_file"
+    field2 = f"{fields[1]}_file"
+    assert lp.load(**{field1: file1, field2: file2})
+    assert lp.load(**{field2: file2, field1: file1})
 
-    def test_loading_existing_file_as_file_succeeds(self):
-        pass
 
-    def test_loading_not_existing_file_as_str_raises_file_not_found_error(self):
-        pass
-
-    def test_loading_not_existing_file_as_file_raises_file_not_found_error(self):
-        pass
-
-    # parametrize: field_type in [re,im,amplitude,intensity,phase]
-    def test_loading_single_field_type_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,im), (amplitude,phase), (intensity,phase)]
-    def test_loading_supplemental_field_types_succeeds(self):
-        pass
-
-    # parametrize: field_types in [(re,amplitude), (re,phase), (re,intensity)...]
-    def test_loading_not_supplemental_field_types_raises_value_error(self):
-        pass
-
-    # parametrize: field_types in [(re,im,phase)...]
-    def test_loading_more_than_two_field_types_raises_value_error(self):
-        pass
+@pytest.mark.parametrize("fields", [("re", "amp"), ("re", "phase"), ("im", "amp"), ("im", "phase")])
+@pytest.mark.parametrize("file1", [gray_png, gray_bmp])
+@pytest.mark.parametrize("file2", [gray_png, gray_bmp])
+def test_should_fail_on_non_complementary_fields(fields, file1, file2):
+    field1 = f"{fields[0]}_file"
+    field2 = f"{fields[1]}_file"
+    with pytest.raises(ValueError, match="Invalid arguments provided.*"):
+        lp.load(**{field1: file1, field2: file2})
+    with pytest.raises(ValueError, match="Invalid arguments provided.*"):
+        lp.load(**{field2: file2, field1: file1})
