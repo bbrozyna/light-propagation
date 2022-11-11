@@ -68,7 +68,6 @@ def load(
 def __load_field(field: str, file: str) -> LightField:
     data = __load_image(file)
 
-    # TODO this just looks wrong...
     if field in ["re", "im", "amplitude"]:
         return LightField(data, np.zeros(data.shape))
     else:  # if field == "phase"
