@@ -24,6 +24,26 @@ class ReIm_convert(keras.layers.Layer):
         return K.concatenate([self.Re, self.Im], axis=1)
 
 
+class Complex_from_Aexp(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, inputs):
+        self.field = inputs[:, 0] * K.exp(1j * inputs[:, 1])
+
+        return self.field
+
+
+class Complex_to_Aexp(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, inputs):
+        self.A = K.abs(inputs)
+        self.phi = tf.math.angle(inputs)
+        return K.concatenate([self.A, self.phi], axis=1)
+
+
 class Structure(keras.layers.Layer):
     def __init__(self, kernel_initializer, **kwargs):
         super(Structure, self).__init__(**kwargs)
@@ -41,6 +61,7 @@ class Structure(keras.layers.Layer):
 
     def call(self, inputs):
         return K.concatenate([inputs[:, 0], inputs[:, 1] + self.kernel], axis=1)
+
 
 class Convolve(keras.layers.Layer):
     def __init__(self, **kwargs):
@@ -60,3 +81,16 @@ class Slice(keras.layers.Layer):
 
     def call(self, kernel):
         return kernel[0, :, :, :]
+
+
+class FFTConvolve(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, data):
+        field = data[0]
+        kernel = data[1]
+        field = tf.signal.fft2d(field)
+        field *= kernel
+        field = tf.signal.ifft2d(field)
+        return field

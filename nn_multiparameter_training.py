@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from lightprop.calculations import get_gaussian_distribution, h
 from lightprop.lightfield import LightField
 from lightprop.optimization.nn import NNMultiTrainer
@@ -51,7 +50,7 @@ if __name__ == "__main__":
         LightField(target, phase, params.wavelength, params.pixel_size),
         LightField.from_complex_array(kernel, params.wavelength, params.pixel_size),
         params.distance,
-        iterations=500,
+        iterations=100,
     )
 
     # Plot loss vs epochs
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     # Extract the optimized phase map from the trainable layer
     optimized_phase = np.array(trained_model.layers[3].get_weights()[0])
 
-      # Plot the result - optimized phase map
+    # Plot the result - optimized phase map
     plotter = Plotter(
         LightField(amp, optimized_phase, params.wavelength, params.pixel_size), output_type=PlotTypes.PHASE
     )
@@ -101,9 +100,8 @@ if __name__ == "__main__":
     result = trained_model([field, kernel]).numpy()
     result = result[0, 0, :, :] * np.exp(1j * result[0, 1, :, :])
 
-     # Plot the result
+    # Plot the result
     plotter = Plotter(
         LightField.from_complex_array(result, params.wavelength, params.pixel_size), output_type=PlotTypes.ABS
     )
     plotter.save_output_as_figure("outs/NNMultiResult.png")
-    

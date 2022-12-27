@@ -3,6 +3,7 @@ import numpy as np
 from lightprop.propagation.params import PropagationParams
 
 
+# impulse response function in the on-axis approximation
 def h(r, distance, wavelength):
     return (
         np.exp(1j * 2 * (np.pi / wavelength) * distance)
@@ -11,8 +12,22 @@ def h(r, distance, wavelength):
     )
 
 
-def gaussian(what_is_r, variance):
-    return np.exp(-(what_is_r**2) / (2 * variance**2))
+# transfer function in the on-axis approximation
+def H_on_axis(vx, vy, distance, wavelength):
+    return np.exp(1j * 2 * (np.pi / wavelength) * distance) * np.exp(
+        -1j * np.pi * wavelength * distance * (vx**2 + vy**2)
+    )
+
+
+# full transfer function
+def H_off_axis(vx, vy, distance, wavelength):
+    return np.exp(
+        1j * 2 * (np.pi / wavelength) * distance * np.sqrt(1 - (vx * wavelength) ** 2 - (vy * wavelength) ** 2)
+    )
+
+
+def gaussian(r, variance):
+    return np.exp(-(r**2) / (2 * variance**2))
 
 
 def lens(r, focal_length, wavelength):

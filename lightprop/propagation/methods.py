@@ -16,12 +16,15 @@ from lightprop.calculations import h
 from lightprop.lightfield import LightField
 from lightprop.propagation.keras_layers import (
     Aexp,
+    Complex_from_Aexp,
+    Complex_to_Aexp,
     Convolve,
+    FFTConvolve,
     ReIm_convert,
     Slice,
     Structure,
 )
-from lightprop.propagation.params import PropagationParams
+
 
 class ConvolutionPropagation:
     def calculate_kernel(self, distance, wavelength, matrix_size, pixel_size):
@@ -167,8 +170,8 @@ class NNPropagation:
             conv[0, 0, :, :], conv[0, 1, :, :], propagation_input.wavelength, propagation_input.pixel
         )
 
+
 class MultiparameterNNPropagation(NNPropagation):
-    
     def propagate(self, propagation_input: LightField, kernel: LightField) -> LightField:
         logging.info("Calculating propagation")
         field_distribution = self.prepare_input_field(propagation_input)
@@ -223,3 +226,36 @@ class MultiparameterNNPropagation(NNPropagation):
 
         return model
 
+
+class MultiparameterNNPropagation_FFTConv(NNPropagation):
+    def propagate(self, propagation_input: LightField, kernel: LightField) -> LightField:
+        logging.info("Calculating propagation")
+        field_distribution = self.prepare_input_field(propagation_input)
+        model = self.build_model(propagation_input.matrix_size)
+        conv = model(field_distribution, kernel).numpy()
+        return LightField.from_re_im(
+            conv[0, 0, :, :], conv[0, 1, :, :], propagation_input.wavelength, propagation_input.pixel
+        )
+
+    def build_model(self, matrix_size: int):
+        inputField = keras.Input(shape=(2, matrix_size, matrix_size))
+        Kernel = keras.Input(shape=(2, matrix_size, matrix_size), batch_size=1)
+
+        x = Aexp()(inputField)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        x = Structure(kernel_initializer=keras.initializers.Zeros())(x)
+        x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        x = Complex_from_Aexp()(x)
+        x = FFTConvolve()([x, Kernel])
+        x = Complex_to_Aexp()(x)
+        outputs = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
+
+        model = keras.Model(inputs=[inputField, Kernel], outputs=outputs)
+
+        for layer in model.layers[:]:
+            layer.trainable = False
+        model.layers[3].trainable = True
+
+        return model
