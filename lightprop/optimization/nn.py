@@ -6,7 +6,6 @@ from tensorflow import keras
 
 import lightprop.propagation.methods as prop
 from lightprop.lightfield import LightField
-from lightprop.propagation.params import PropagationParams
 
 
 class NNTrainer:
@@ -64,12 +63,47 @@ class NNTrainer:
         plt.yscale("log")
         plt.show()
 
+
 class NNMultiTrainer(NNTrainer):
-    
-    def optimize(self, input_field: LightField, target_field: LightField, kernel: LightField, distance, iterations: int = 100):
+    def optimize(
+        self, input_field: LightField, target_field: LightField, kernel: LightField, distance, iterations: int = 100
+    ):
         propagator = prop.MultiparameterNNPropagation()
         self.model = propagator.build_model(input_field.matrix_size)
-        
+
+        self.log.info("Compiling model...")
+        self.model.compile(
+            optimizer=keras.optimizers.Adam(learning_rate=1e-1),
+            loss=keras.losses.MeanSquaredError(),
+        )
+
+        checkpoint_filepath = "./tmp/checkpoint"
+        self.log.info(f"Setting up checkpoint at {checkpoint_filepath}...")
+        model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
+            filepath=checkpoint_filepath, save_weights_only=True, monitor="loss", mode="min", save_best_only=True
+        )
+
+        self.log.info("Fitting model...")
+        self.history = self.model.fit(
+            [propagator.prepare_input_field(input_field), propagator.prepare_input_field(kernel)],
+            propagator.prepare_input_field(target_field),
+            batch_size=1,
+            epochs=iterations,
+            callbacks=[model_checkpoint_callback],
+        )
+
+        self.log.info("Loading best configuration...")
+        self.model.load_weights(checkpoint_filepath)
+        return self.model
+
+
+class NN_FFTTrainer(NNTrainer):
+    def optimize(
+        self, input_field: LightField, target_field: LightField, kernel: LightField, distance, iterations: int = 100
+    ):
+        propagator = prop.MultiparameterNNPropagation_FFTConv()
+        self.model = propagator.build_model(input_field.matrix_size)
+
         self.log.info("Compiling model...")
         self.model.compile(
             optimizer=keras.optimizers.Adam(learning_rate=1e-1),
@@ -94,4 +128,3 @@ class NNMultiTrainer(NNTrainer):
         self.log.info("Loading best configuration...")
         self.model.load_weights(checkpoint_filepath)
         return self.model
-

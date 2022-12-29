@@ -5,7 +5,7 @@ from lightprop.propagation.params import PropagationParams
 
 # Prepare propagator
 params = PropagationParams.get_example_propagation_data()
-propagator = prop.NNPropagation()
+propagator = prop.MultiparameterNNPropagation_FFTConv()
 
 # Extract network with dimensions and trainable weights
 model = propagator.build_model(params.matrix_size)

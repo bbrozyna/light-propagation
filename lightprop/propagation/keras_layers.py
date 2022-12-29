@@ -88,9 +88,14 @@ class FFTConvolve(keras.layers.Layer):
         super().__init__(**kwargs)
 
     def call(self, data):
-        field = data[0]
-        kernel = data[1]
-        field = tf.signal.fft2d(field)
-        field *= kernel
-        field = tf.signal.ifft2d(field)
-        return field
+        field = tf.cast(data[0], tf.complex64)
+        kernel = tf.cast(data[1], tf.complex64)
+
+        self.ComplexField = field[:, 0] * K.exp(1j * field[:, 1])
+        self.ComplexKernel = kernel[:, 0] * K.exp(1j * kernel[:, 1])
+
+        self.ComplexField = tf.signal.fft2d(self.ComplexField)
+        self.ComplexField *= self.ComplexKernel
+        self.ComplexField = tf.signal.ifft2d(self.ComplexField)
+
+        return K.concatenate([K.abs(self.ComplexField), tf.math.angle(self.ComplexField)], axis=1)

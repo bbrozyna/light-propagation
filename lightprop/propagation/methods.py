@@ -16,8 +16,6 @@ from lightprop.calculations import h
 from lightprop.lightfield import LightField
 from lightprop.propagation.keras_layers import (
     Aexp,
-    Complex_from_Aexp,
-    Complex_to_Aexp,
     Convolve,
     FFTConvolve,
     ReIm_convert,
@@ -247,9 +245,8 @@ class MultiparameterNNPropagation_FFTConv(NNPropagation):
         x = Structure(kernel_initializer=keras.initializers.Zeros())(x)
         x = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
-        x = Complex_from_Aexp()(x)
         x = FFTConvolve()([x, Kernel])
-        x = Complex_to_Aexp()(x)
+
         outputs = keras.layers.Reshape((2, matrix_size, matrix_size))(x)
 
         model = keras.Model(inputs=[inputField, Kernel], outputs=outputs)
