@@ -1,6 +1,7 @@
 import logging
 
 import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
@@ -102,7 +103,7 @@ class NN_FFTTrainer(NNTrainer):
         self, input_field: LightField, target_field: LightField, kernel: LightField, distance, iterations: int = 100
     ):
         propagator = prop.MultiparameterNNPropagation_FFTConv()
-        self.model = propagator.build_model(input_field.matrix_size)
+        self.model = propagator.build_model(input_field[0].matrix_size)
 
         self.log.info("Compiling model...")
         self.model.compile(
@@ -118,8 +119,17 @@ class NN_FFTTrainer(NNTrainer):
 
         self.log.info("Fitting model...")
         self.history = self.model.fit(
-            [propagator.prepare_input_field(input_field), propagator.prepare_input_field(kernel)],
-            propagator.prepare_input_field(target_field),
+            [
+                np.array(list(map(propagator.prepare_input_field, input_field))).reshape(
+                    (len(input_field), 2, input_field[0].matrix_size, input_field[0].matrix_size)
+                ),
+                np.array(list(map(propagator.prepare_input_field, kernel))).reshape(
+                    (len(input_field), 2, input_field[0].matrix_size, input_field[0].matrix_size)
+                ),
+            ],
+            np.array(list(map(propagator.prepare_input_field, target_field))).reshape(
+                (len(input_field), 2, input_field[0].matrix_size, input_field[0].matrix_size)
+            ),
             batch_size=1,
             epochs=iterations,
             callbacks=[model_checkpoint_callback],

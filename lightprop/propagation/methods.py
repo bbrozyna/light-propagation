@@ -228,7 +228,7 @@ class MultiparameterNNPropagation(NNPropagation):
 class MultiparameterNNPropagation_FFTConv(NNPropagation):
     def propagate(self, propagation_input: LightField, kernel: LightField) -> LightField:
         logging.info("Calculating propagation")
-        field_distribution = self.prepare_input_field(propagation_input)
+        field_distribution = map(self.prepare_input_field, propagation_input)
         model = self.build_model(propagation_input.matrix_size)
         conv = model(field_distribution, kernel).numpy()
         return LightField.from_re_im(
